@@ -1,0 +1,435 @@
+openapi: 3.1.0
+info:
+  title: Notyfi account keys API
+  version: 1.2.0
+  description: 'Track anything in a sentence and get notified the moment it happens -- by email, REST API, or MCP. Authenticate every request with a Notyfi API key (`Authorization: Bearer notyfi_mk_...`). Manage keys in your dashboard.'
+servers:
+- url: https://api.notyfi.com
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+tags:
+- name: keys
+paths:
+  /api/v1/keys:
+    get:
+      tags:
+      - keys
+      summary: List the caller's tenant's API keys
+      description: 'Every API key owned by the caller''s tenant (live + revoked), WITHOUT key material -- only the
+
+        branded display ``prefix`` (null for keys minted before prefixes were stored) + metadata. The
+
+        plaintext is shown exactly once, at mint time, and is unrecoverable afterwards.'
+      operationId: list_api_keys_api_v1_keys_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiKeyInfo'
+                title: Response List Api Keys Api V1 Keys Get
+        '401':
+          description: Missing or invalid credentials (auth enabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded (per-principal fixed window). Honour the Retry-After + X-RateLimit-* headers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: The caller authenticated WITH an API key -- api keys cannot manage api keys (use a signed-in user credential).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - keys
+      summary: Mint a new API key (the plaintext is returned ONCE, here)
+      description: 'Mint a key owned by the caller''s tenant. ``key`` (the plaintext) appears in THIS response ONLY --
+
+        Atlas stores just its sha256 hash, so it can never be retrieved again; save it immediately.'
+      operationId: create_api_key_api_v1_keys_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApiKey'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyCreated'
+        '401':
+          description: Missing or invalid credentials (auth enabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded (per-principal fixed window). Honour the Retry-After + X-RateLimit-* headers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: The caller authenticated WITH an API key -- api keys cannot manage api keys (use a signed-in user credential).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/keys/{key_id}:
+    delete:
+      tags:
+      - keys
+      summary: Revoke an API key
+      description: 'REVOKE (not delete) a key owned by the caller''s tenant: the row stays listed (``revoked: true``)
+
+        but never authenticates again. 404 if the id is missing or another tenant''s; 204 on success.'
+      operationId: revoke_api_key_api_v1_keys__key_id__delete
+      parameters:
+      - name: key_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Key Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Missing or invalid credentials (auth enabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded (per-principal fixed window). Honour the Retry-After + X-RateLimit-* headers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: The caller authenticated WITH an API key -- api keys cannot manage api keys (use a signed-in user credential).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: API key not found (or owned by another tenant).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ApiKeyCreated:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+          description: Human label given at mint time.
+          default: ''
+        prefix:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prefix
+          description: 'Display handle: the branded ''notyfi_mk_'' marker + 3 token chars -- enough to tell keys apart, never enough to authenticate. Null for keys minted before prefixes were stored.'
+        created_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created At
+          description: When the key was minted.
+        last_used_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Used At
+          description: Last successful authentication with this key; null = never used.
+        revoked:
+          type: boolean
+          title: Revoked
+          description: True = the key no longer authenticates (revocation is permanent).
+          default: false
+        scopes:
+          items:
+            type: string
+          type: array
+          title: Scopes
+          description: Capabilities carried by this key's authenticated Principal. Legacy metadata is reported verbatim; new keys accept only read/feeds:write.
+        key:
+          type: string
+          title: Key
+          description: THE PLAINTEXT KEY -- SHOWN EXACTLY ONCE, RIGHT HERE. Only its sha256 hash is stored, so it is NOT retrievable later. Save it immediately.
+      type: object
+      required:
+      - id
+      - key
+      title: ApiKeyCreated
+      description: 'The mint response: :class:`ApiKeyInfo` plus ``key`` -- THE PLAINTEXT API KEY, RETURNED EXACTLY
+
+        ONCE, IN THIS RESPONSE ONLY. Notyfi stores ONLY its sha256 hash; the plaintext can NEVER be
+
+        retrieved again (not by list, not by support). SAVE IT NOW -- losing it means minting a new key.'
+      example:
+        created_at: '2026-07-01T00:00:00Z'
+        id: 1
+        key: notyfi_mk_A1bC2dE3fG4hI5jK6lM7nO8pQ9rS0tU1vW2xY3z
+        name: CI key
+        prefix: notyfi_mk_A1b
+        revoked: false
+        scopes:
+        - read
+        - feeds:write
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Error:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+      type: object
+      required:
+      - error
+      title: Error
+      description: The single error response shape for every 4xx/5xx on the contract.
+      example:
+        error:
+          code: not_found
+          message: lead not found
+    CreateApiKey:
+      properties:
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+          description: Human label for the key (1-64 chars).
+        scopes:
+          items:
+            $ref: '#/components/schemas/ApiKeyScope'
+          type: array
+          minItems: 1
+          title: Scopes
+          description: Capabilities granted to the key. Defaults to read + tracker writes. Use ['read'] for a read-only key.
+      type: object
+      required:
+      - name
+      title: CreateApiKey
+      description: 'The mint body: a human label for the new key, shown back in listings so a tenant can tell its
+
+        keys apart (''CI key'', ''Claude Desktop'', ...).'
+      example:
+        name: CI key
+        scopes:
+        - read
+        - feeds:write
+    ErrorBody:
+      properties:
+        code:
+          type: string
+          title: Code
+          description: Stable machine-readable error code.
+        message:
+          type: string
+          title: Message
+          description: Human-readable detail.
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+          description: Correlation id, when available.
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorBody
+    ApiKeyScope:
+      type: string
+      enum:
+      - read
+      - feeds:write
+      title: ApiKeyScope
+      description: The complete capability vocabulary assignable to an Atlas API key.
+    ApiKeyInfo:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+          description: Human label given at mint time.
+          default: ''
+        prefix:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prefix
+          description: 'Display handle: the branded ''notyfi_mk_'' marker + 3 token chars -- enough to tell keys apart, never enough to authenticate. Null for keys minted before prefixes were stored.'
+        created_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created At
+          description: When the key was minted.
+        last_used_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Used At
+          description: Last successful authentication with this key; null = never used.
+        revoked:
+          type: boolean
+          title: Revoked
+          description: True = the key no longer authenticates (revocation is permanent).
+          default: false
+        scopes:
+          items:
+            type: string
+          type: array
+          title: Scopes
+          description: Capabilities carried by this key's authenticated Principal. Legacy metadata is reported verbatim; new keys accept only read/feeds:write.
+      type: object
+      required:
+      - id
+      title: ApiKeyInfo
+      description: 'One API key owned by the caller''s tenant (the list/read shape). NEVER carries key material: the
+
+        plaintext is unrecoverable (only its sha256 hash is stored) and ``prefix`` is a display handle.'
+      example:
+        created_at: '2026-07-01T00:00:00Z'
+        id: 1
+        name: CI key
+        prefix: notyfi_mk_A1b
+        revoked: false
+        scopes:
+        - read
+        - feeds:write
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Notyfi API key: `Authorization: Bearer notyfi_mk_...`'
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+      description: Notyfi API key as X-Api-Key.

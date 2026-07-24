@@ -1,0 +1,733 @@
+openapi: 3.1.0
+info:
+  title: Notyfi account webhooks API
+  version: 1.2.0
+  description: 'Track anything in a sentence and get notified the moment it happens -- by email, REST API, or MCP. Authenticate every request with a Notyfi API key (`Authorization: Bearer notyfi_mk_...`). Manage keys in your dashboard.'
+servers:
+- url: https://api.notyfi.com
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+tags:
+- name: webhooks
+paths:
+  /api/v1/webhooks:
+    get:
+      tags:
+      - webhooks
+      summary: List outgoing tracker webhook endpoints
+      operationId: list_webhook_endpoints_api_v1_webhooks_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookEndpointInfo'
+                title: Response List Webhook Endpoints Api V1 Webhooks Get
+        '401':
+          description: Missing or invalid credentials (auth enabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded (per-principal fixed window). Honour the Retry-After + X-RateLimit-* headers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - webhooks
+      summary: Register an outgoing tracker webhook
+      description: 'The HMAC ``signing_secret`` is returned exactly once. Empty ``tracker_ids`` means all of the
+
+        account''s trackers; otherwise every listed opaque tracker ID must be owned by the account.
+
+
+        Verify ``Notyfi-Signature: v1=<hex>`` as HMAC-SHA256 over
+
+        ``<Notyfi-Timestamp>.<raw request body>``. Use ``Notyfi-Event-Id`` for event identity and
+
+        ``Notyfi-Delivery-Id`` to make retries idempotent. Notyfi treats any 2xx as delivered and retries
+
+        failures with bounded exponential backoff.'
+      operationId: create_webhook_endpoint_api_v1_webhooks_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookEndpointCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpointCreated'
+        '401':
+          description: Missing or invalid credentials (auth enabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded (per-principal fixed window). Honour the Retry-After + X-RateLimit-* headers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: The API key lacks the feeds:write capability required for tracker mutations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: The account has reached its webhook endpoint limit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Unsafe URL, invalid event type, or foreign tracker filter.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Webhook signing is not configured on this deployment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/webhooks/{webhook_id}:
+    patch:
+      tags:
+      - webhooks
+      summary: Update or disable an outgoing tracker webhook
+      operationId: update_webhook_endpoint_api_v1_webhooks__webhook_id__patch
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 10
+          maxLength: 128
+          pattern: ^wh_[A-Za-z0-9_-]+$
+          description: Opaque Notyfi webhook endpoint ID.
+          title: Webhook Id
+        description: Opaque Notyfi webhook endpoint ID.
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookEndpointUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpointInfo'
+        '401':
+          description: Missing or invalid credentials (auth enabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded (per-principal fixed window). Honour the Retry-After + X-RateLimit-* headers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: The API key lacks the feeds:write capability required for tracker mutations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Webhook endpoint not found (or owned by another tenant).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: The account has reached its webhook endpoint limit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Unsafe URL, invalid event type, or foreign tracker filter.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Webhook signing is not configured on this deployment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+      - webhooks
+      summary: Delete an outgoing tracker webhook
+      operationId: delete_webhook_endpoint_api_v1_webhooks__webhook_id__delete
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 10
+          maxLength: 128
+          pattern: ^wh_[A-Za-z0-9_-]+$
+          description: Opaque Notyfi webhook endpoint ID.
+          title: Webhook Id
+        description: Opaque Notyfi webhook endpoint ID.
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Missing or invalid credentials (auth enabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded (per-principal fixed window). Honour the Retry-After + X-RateLimit-* headers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: The API key lacks the feeds:write capability required for tracker mutations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Webhook endpoint not found (or owned by another tenant).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/webhooks/{webhook_id}/rotate-secret:
+    post:
+      tags:
+      - webhooks
+      summary: Rotate a webhook signing secret
+      operationId: rotate_webhook_secret_api_v1_webhooks__webhook_id__rotate_secret_post
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 10
+          maxLength: 128
+          pattern: ^wh_[A-Za-z0-9_-]+$
+          description: Opaque Notyfi webhook endpoint ID.
+          title: Webhook Id
+        description: Opaque Notyfi webhook endpoint ID.
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSecretRotated'
+        '401':
+          description: Missing or invalid credentials (auth enabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded (per-principal fixed window). Honour the Retry-After + X-RateLimit-* headers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: The API key lacks the feeds:write capability required for tracker mutations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Webhook endpoint not found (or owned by another tenant).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: The account has reached its webhook endpoint limit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Unsafe URL, invalid event type, or foreign tracker filter.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Webhook signing is not configured on this deployment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/webhooks/{webhook_id}/test:
+    post:
+      tags:
+      - webhooks
+      summary: Send a signed webhook.test event now
+      operationId: test_webhook_endpoint_api_v1_webhooks__webhook_id__test_post
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 10
+          maxLength: 128
+          pattern: ^wh_[A-Za-z0-9_-]+$
+          description: Opaque Notyfi webhook endpoint ID.
+          title: Webhook Id
+        description: Opaque Notyfi webhook endpoint ID.
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookTestResult'
+        '401':
+          description: Missing or invalid credentials (auth enabled).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded (per-principal fixed window). Honour the Retry-After + X-RateLimit-* headers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: The API key lacks the feeds:write capability required for tracker mutations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Webhook endpoint not found (or owned by another tenant).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    WebhookEventType:
+      type: string
+      enum:
+      - tracker.event.created
+      - tracker.event.updated
+      title: WebhookEventType
+      description: Canonical tracker-event changes available to outgoing Notyfi webhooks.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    WebhookEndpointCreate:
+      properties:
+        url:
+          type: string
+          maxLength: 2048
+          minLength: 1
+          title: Url
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+          maxItems: 2
+          minItems: 1
+          title: Events
+        tracker_ids:
+          items:
+            type: string
+          type: array
+          maxItems: 100
+          title: Tracker Ids
+      additionalProperties: false
+      type: object
+      required:
+      - url
+      title: WebhookEndpointCreate
+      description: Register an account webhook; an empty tracker list subscribes to every owned tracker.
+      example:
+        events:
+        - tracker.event.created
+        - tracker.event.updated
+        tracker_ids: []
+        url: https://example.com/notyfi-webhook
+    WebhookSecretRotated:
+      properties:
+        id:
+          type: string
+          title: Id
+        signing_secret:
+          type: string
+          title: Signing Secret
+          description: Replacement HMAC signing secret, returned exactly once.
+      type: object
+      required:
+      - id
+      - signing_secret
+      title: WebhookSecretRotated
+    WebhookEndpointInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: Opaque webhook endpoint ID.
+        url:
+          type: string
+          title: Url
+        enabled:
+          type: boolean
+          title: Enabled
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+          title: Events
+        tracker_ids:
+          items:
+            type: string
+          type: array
+          title: Tracker Ids
+          description: Empty means every tracker owned by the account.
+        created_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Updated At
+      type: object
+      required:
+      - id
+      - url
+      - enabled
+      - events
+      title: WebhookEndpointInfo
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WebhookTestResult:
+      properties:
+        delivered:
+          type: boolean
+          title: Delivered
+        event_id:
+          type: string
+          title: Event Id
+        http_status:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Http Status
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      required:
+      - delivered
+      - event_id
+      title: WebhookTestResult
+    WebhookEndpointCreated:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: Opaque webhook endpoint ID.
+        url:
+          type: string
+          title: Url
+        enabled:
+          type: boolean
+          title: Enabled
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+          title: Events
+        tracker_ids:
+          items:
+            type: string
+          type: array
+          title: Tracker Ids
+          description: Empty means every tracker owned by the account.
+        created_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Updated At
+        signing_secret:
+          type: string
+          title: Signing Secret
+          description: HMAC signing secret, returned exactly once. Store it securely.
+      type: object
+      required:
+      - id
+      - url
+      - enabled
+      - events
+      - signing_secret
+      title: WebhookEndpointCreated
+    Error:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+      type: object
+      required:
+      - error
+      title: Error
+      description: The single error response shape for every 4xx/5xx on the contract.
+      example:
+        error:
+          code: not_found
+          message: lead not found
+    ErrorBody:
+      properties:
+        code:
+          type: string
+          title: Code
+          description: Stable machine-readable error code.
+        message:
+          type: string
+          title: Message
+          description: Human-readable detail.
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+          description: Correlation id, when available.
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorBody
+    WebhookEndpointUpdate:
+      properties:
+        url:
+          anyOf:
+          - type: string
+            maxLength: 2048
+            minLength: 1
+          - type: 'null'
+          title: Url
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+        events:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/WebhookEventType'
+            type: array
+            maxItems: 2
+            minItems: 1
+          - type: 'null'
+          title: Events
+        tracker_ids:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            maxItems: 100
+          - type: 'null'
+          title: Tracker Ids
+      additionalProperties: false
+      type: object
+      title: WebhookEndpointUpdate
+      description: Partial endpoint update. An explicit empty tracker list restores account-wide delivery.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Notyfi API key: `Authorization: Bearer notyfi_mk_...`'
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+      description: Notyfi API key as X-Api-Key.

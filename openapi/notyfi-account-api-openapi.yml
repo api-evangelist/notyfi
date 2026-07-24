@@ -1,0 +1,740 @@
+openapi: 3.1.0
+info:
+  title: Notyfi account API
+  version: 1.2.0
+  description: 'Track anything in a sentence and get notified the moment it happens -- by email, REST API, or MCP. Authenticate every request with a Notyfi API key (`Authorization: Bearer notyfi_mk_...`). Manage keys in your dashboard.'
+servers:
+- url: https://api.notyfi.com
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+tags:
+- name: account
+paths:
+  /api/v1/account:
+    get:
+      tags:
+      - account
+      summary: Read/bootstrap the signed-in consumer account
+      description: 'The Bearer access token authorizes; an optional, independently verified same-sub ID token
+
+        bootstraps/refreshes the account''s verified email.'
+      operationId: account_api_v1_account_get
+      parameters:
+      - name: X-Notyfi-ID-Token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Notyfi-Id-Token
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotyfiAccountInfo'
+        '401':
+          description: Missing or invalid Cognito access token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: API keys cannot manage a human billing account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Account identity or billing-state conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Stripe is unavailable or not configured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - account
+      summary: Update the signed-in consumer profile and workspace
+      operationId: patch_account_api_v1_account_patch
+      parameters:
+      - name: X-Notyfi-ID-Token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Notyfi-Id-Token
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotyfiAccountPatch'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotyfiAccountInfo'
+        '401':
+          description: Missing or invalid Cognito access token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: API keys cannot manage a human billing account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Account identity or billing-state conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Stripe is unavailable or not configured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - account
+      summary: Confirm and begin permanent account deletion
+      operationId: delete_account_api_v1_account_delete
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotyfiAccountDeleteConfirm'
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotyfiAccountDeletionInfo'
+        '401':
+          description: Missing or invalid Cognito access token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: API keys cannot manage a human billing account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Account identity or billing-state conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Stripe is unavailable or not configured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/notification-emails:
+    post:
+      tags:
+      - account
+      summary: Add or resend verification for a notification email
+      operationId: add_notification_email_api_v1_account_notification_emails_post
+      parameters:
+      - name: X-Notyfi-ID-Token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Notyfi-Id-Token
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotyfiNotificationEmailCreate'
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotyfiNotificationEmailInfo'
+        '401':
+          description: Missing or invalid Cognito access token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: API keys cannot manage a human billing account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Account identity or billing-state conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Stripe is unavailable or not configured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/notification-emails/{recipient_id}:
+    patch:
+      tags:
+      - account
+      summary: Enable or disable a verified notification email
+      operationId: update_notification_email_api_v1_account_notification_emails__recipient_id__patch
+      parameters:
+      - name: recipient_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Recipient Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotyfiNotificationEmailUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotyfiNotificationEmailInfo'
+        '401':
+          description: Missing or invalid Cognito access token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: API keys cannot manage a human billing account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Account identity or billing-state conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Stripe is unavailable or not configured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - account
+      summary: Remove a secondary notification email
+      operationId: delete_notification_email_api_v1_account_notification_emails__recipient_id__delete
+      parameters:
+      - name: recipient_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Recipient Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Missing or invalid Cognito access token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: API keys cannot manage a human billing account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Account identity or billing-state conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Stripe is unavailable or not configured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    NotyfiNotificationEmailInfo:
+      properties:
+        id:
+          type: integer
+          title: Id
+        email:
+          type: string
+          title: Email
+        enabled:
+          type: boolean
+          title: Enabled
+          default: true
+        verified:
+          type: boolean
+          title: Verified
+          default: false
+        primary:
+          type: boolean
+          title: Primary
+          default: false
+        verification_expires_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Verification Expires At
+      type: object
+      required:
+      - id
+      - email
+      title: NotyfiNotificationEmailInfo
+    NotyfiNotificationEmailUpdate:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+      additionalProperties: false
+      type: object
+      required:
+      - enabled
+      title: NotyfiNotificationEmailUpdate
+    NotyfiNotificationEmailCreate:
+      properties:
+        email:
+          type: string
+          maxLength: 254
+          minLength: 3
+          title: Email
+      additionalProperties: false
+      type: object
+      required:
+      - email
+      title: NotyfiNotificationEmailCreate
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    NotyfiWorkspaceFolder:
+      properties:
+        id:
+          type: string
+          maxLength: 64
+          minLength: 1
+          pattern: ^[A-Za-z0-9][A-Za-z0-9_-]*$
+          title: Id
+        name:
+          type: string
+          maxLength: 80
+          minLength: 1
+          title: Name
+        tracker_ids:
+          items:
+            type: string
+          type: array
+          maxItems: 500
+          title: Tracker Ids
+      additionalProperties: false
+      type: object
+      required:
+      - id
+      - name
+      title: NotyfiWorkspaceFolder
+    NotyfiWorkspace:
+      properties:
+        folders:
+          items:
+            $ref: '#/components/schemas/NotyfiWorkspaceFolder'
+          type: array
+          maxItems: 100
+          title: Folders
+        tracker_labels:
+          additionalProperties:
+            type: string
+          type: object
+          title: Tracker Labels
+      additionalProperties: false
+      type: object
+      title: NotyfiWorkspace
+    NotyfiAccountPatch:
+      properties:
+        expected_revision:
+          type: integer
+          minimum: 0.0
+          title: Expected Revision
+        display_name:
+          anyOf:
+          - type: string
+            maxLength: 80
+            minLength: 1
+          - type: 'null'
+          title: Display Name
+        workspace:
+          anyOf:
+          - $ref: '#/components/schemas/NotyfiWorkspace'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      required:
+      - expected_revision
+      title: NotyfiAccountPatch
+    NotyfiAccountInfo:
+      properties:
+        tenant_id:
+          type: integer
+          title: Tenant Id
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        email_verified:
+          type: boolean
+          title: Email Verified
+          default: false
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        workspace_revision:
+          type: integer
+          minimum: 0.0
+          title: Workspace Revision
+          default: 0
+        workspace:
+          $ref: '#/components/schemas/NotyfiWorkspace'
+        notification_emails:
+          items:
+            $ref: '#/components/schemas/NotyfiNotificationEmailInfo'
+          type: array
+          title: Notification Emails
+      type: object
+      required:
+      - tenant_id
+      title: NotyfiAccountInfo
+      description: 'The consumer identity bound to the access-token subject.
+
+
+        ``email`` is populated only from a separately verified, same-sub Cognito ID token.  It is never
+
+        accepted from an ordinary request body or copied back from Stripe.'
+    Error:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+      type: object
+      required:
+      - error
+      title: Error
+      description: The single error response shape for every 4xx/5xx on the contract.
+      example:
+        error:
+          code: not_found
+          message: lead not found
+    NotyfiAccountDeletionInfo:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        status:
+          type: string
+          title: Status
+        requested_at:
+          type: string
+          title: Requested At
+        local_completed_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Local Completed At
+        external_cleanup_required:
+          items:
+            type: string
+          type: array
+          title: External Cleanup Required
+      type: object
+      required:
+      - job_id
+      - status
+      - requested_at
+      title: NotyfiAccountDeletionInfo
+    ErrorBody:
+      properties:
+        code:
+          type: string
+          title: Code
+          description: Stable machine-readable error code.
+        message:
+          type: string
+          title: Message
+          description: Human-readable detail.
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+          description: Correlation id, when available.
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorBody
+    NotyfiAccountDeleteConfirm:
+      properties:
+        confirmation:
+          type: string
+          const: DELETE
+          title: Confirmation
+      additionalProperties: false
+      type: object
+      required:
+      - confirmation
+      title: NotyfiAccountDeleteConfirm
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Notyfi API key: `Authorization: Bearer notyfi_mk_...`'
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+      description: Notyfi API key as X-Api-Key.
