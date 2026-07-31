@@ -1,0 +1,23 @@
+generated: '2026-07-20'
+method: derived
+source: openapi/notyfi-openapi-original.json
+versioning:
+  scheme: uri-path
+  current: v1
+  base_path: /api/v1
+  spec_version: 1.2.0
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: No published deprecation policy or RFC 8594 Sunset/Deprecation header support found (2026-07-20).
+sla:
+  url: null
+status_page:
+  url: null
+  note: No confirmed public status page (notyfi.com is a client-rendered SPA; /status returns the app shell, not a verified status surface).
+resource_lifecycle:
+  note: >-
+    Trackers (feed requests) move through lifecycle states; a spec_ready request can be
+    ratified/declined, and any tracker can be soft-archived (410 feed_deleted) while
+    retaining history and reserved identity.
+deprecated_operations: []

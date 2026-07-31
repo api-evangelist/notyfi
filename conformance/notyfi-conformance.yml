@@ -1,0 +1,30 @@
+generated: '2026-07-20'
+method: derived
+source: openapi/notyfi-openapi-original.json
+standards:
+  - id: oauth2
+    conforms: false
+    evidence: No oauth2 securityScheme; auth is API-key (http bearer + X-Api-Key).
+  - id: oidc
+    conforms: false
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: 'Errors use a custom { error: { code, message, request_id } } envelope, not application/problem+json.'
+  - id: rfc8594-sunset
+    conforms: false
+    evidence: No Sunset/Deprecation header support documented.
+  - id: idempotency
+    conforms: true
+    evidence: Idempotency-Key header on POST /api/v1/trackers with replay/conflict semantics.
+  - id: cursor-pagination
+    conforms: true
+    evidence: limit + opaque cursor params; responses carry next_cursor + items.
+  - id: rate-limit-headers
+    conforms: true
+    evidence: 429 responses advertise Retry-After and X-RateLimit-* headers.
+  - id: webhook-hmac-signing
+    conforms: true
+    evidence: Outgoing webhooks are HMAC-signed with a rotatable signing_secret.
+  - id: openapi-3.1
+    conforms: true
+    evidence: Published OpenAPI 3.1.0 document at api.notyfi.com/api/public-openapi.json.

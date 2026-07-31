@@ -1,0 +1,52 @@
+generated: '2026-07-20'
+method: derived
+source: openapi/notyfi-openapi-original.json
+notes: >-
+  Cross-cutting request/response semantics derived from the Notyfi OpenAPI 1.2.0 and
+  the live MCP server. Cross-links errors/, lifecycle/, authentication/, rate-limits/.
+authentication:
+  style: api-key
+  schemes:
+    - Authorization: Bearer notyfi_mk_...
+    - X-Api-Key: notyfi_mk_...
+  key_scopes: [read, feeds:write]
+  ref: authentication/notyfi-authentication.yml
+idempotency:
+  supported: true
+  header: Idempotency-Key
+  scope: POST /api/v1/trackers (tracker creation)
+  behavior: >-
+    Replaying the same Idempotency-Key with an identical body returns the same tracker;
+    reusing the same key with a different body returns 409 (Idempotency-Key body conflict).
+  evidence: openapi Idempotency-Key parameter on create_tracker; 409/422 response descriptions
+pagination:
+  style: cursor
+  request_params: [limit, cursor]
+  limit_default: 50
+  limit_max: 200
+  response_fields:
+    items: items
+    next_cursor: next_cursor
+    total: total
+  applies_to:
+    - GET /api/v1/trackers/{public_id}/events
+request_tracing:
+  correlation_field: request_id
+  location: error response body (error.request_id)
+versioning:
+  scheme: uri-path
+  current: v1
+  base_path: /api/v1
+rate_limiting:
+  model: per-principal fixed window
+  signal_headers: [Retry-After, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset]
+  status: 429
+  ref: rate-limits/
+error_envelope:
+  shape: '{ "error": { "code": <string>, "message": <string>, "request_id": <string|null> } }'
+  format: custom-envelope
+  note: Not RFC 9457 problem+json; a single stable envelope for every 4xx/5xx.
+  ref: errors/notyfi-error-codes.yml
+resource_ids:
+  trackers: 'fr_<22 url-safe chars> (opaque public_id; never the internal feed slug)'
+  api_key_prefix: notyfi_mk_

@@ -1,0 +1,33 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Notyfi API
+  version: 1.0.0
+extends: openapi/notyfi-openapi-original.json
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-enriched: '2026-07-20'
+      x-apievangelist-conventions:
+        idempotency:
+          header: Idempotency-Key
+          operations: [create_tracker_api_v1_trackers_post]
+        pagination:
+          style: cursor
+          params: [limit, cursor]
+          response_fields: [items, next_cursor, total]
+        rate_limiting:
+          headers: [Retry-After, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset]
+        error_envelope: '{ error: { code, message, request_id } }'
+      x-apievangelist-mcp:
+        url: https://mcp.notyfi.com
+        published: true
+      x-apievangelist-webhooks:
+        events: [tracker.event.created, tracker.event.updated]
+  - target: $.info
+    update:
+      x-apievangelist-tags:
+        - notifications
+        - monitoring
+        - webhooks
+        - real-time
+        - agents

@@ -1,0 +1,38 @@
+# Notyfi
+
+> Track anything in a sentence and get notified the moment it happens — by email, REST API, or MCP. Describe what to watch in plain English (new lawsuits, layoffs, price drops, listings, RFPs, breaking news) and Notyfi watches the news, filings, databases, and the open web for it, delivering deduplicated canonical events instantly, hourly, daily, or weekly. Built by Perceptron ML (Y Combinator). Authenticate every request with a Notyfi API key (`Authorization: Bearer notyfi_mk_...` or `X-Api-Key`).
+
+## APIs
+
+- [Notyfi API (OpenAPI 3.1)](https://api.notyfi.com/api/public-openapi.json): REST API v1 — trackers, events, webhooks, API keys, account, billing.
+- [API reference](https://notyfi.com/docs): Redoc-rendered reference.
+- [Base URL](https://api.notyfi.com): all endpoints under /api/v1.
+
+## MCP
+
+- [Notyfi MCP server](https://mcp.notyfi.com): live hosted MCP server (FastMCP). Tools: list_trackers, get_tracker, create_tracker, list_tracker_events, update_tracker_delivery, archive_tracker. Auth via the same Notyfi API key; tracker writes require the feeds:write scope.
+
+## Core operations
+
+- create_tracker (POST /api/v1/trackers): create a persistent tracker from a natural-language query (8–500 chars); cadence instant|hourly|daily|weekly (plan-gated); supports Idempotency-Key.
+- list_trackers (GET /api/v1/trackers): list active trackers, newest first.
+- list_tracker_events (GET /api/v1/trackers/{public_id}/events): page a tracker's deduplicated events (cursor pagination, limit ≤ 200).
+- webhooks (POST/GET/PATCH/DELETE /api/v1/webhooks): manage HMAC-signed outgoing webhooks for tracker.event.created / tracker.event.updated.
+- keys (GET/POST/DELETE /api/v1/keys): manage API keys and scopes (read, feeds:write).
+- billing (GET /api/v1/billing, POST .../checkout, .../portal): Stripe-backed plan management.
+
+## Conventions
+
+- [Conventions](conventions/notyfi-conventions.yml): auth, idempotency, cursor pagination, rate-limit signaling, error envelope.
+- [Error codes](errors/notyfi-error-codes.yml): single `{ error: { code, message, request_id } }` envelope.
+- [Authentication](authentication/notyfi-authentication.yml): API-key bearer + X-Api-Key.
+- [Webhooks](asyncapi/notyfi-webhooks.yml): outgoing event surface.
+
+## Company
+
+- [Homepage](https://notyfi.com/)
+- [Pricing](https://notyfi.com/#pricing): Free ($0), Pro ($19/mo), Enterprise (custom).
+- [Sign up](https://notyfi.com/dashboard/#signup)
+- [Terms](https://notyfi.com/terms)
+- [Privacy](https://notyfi.com/privacy)
+- [Y Combinator](https://www.ycombinator.com/companies/notyfi)

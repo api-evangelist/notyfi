@@ -1,0 +1,28 @@
+generated: '2026-07-20'
+method: searched
+source: openapi/notyfi-openapi-original.json
+spec_type: Webhooks
+notes: >-
+  Notyfi publishes an outgoing-webhook surface (no AsyncAPI document). Endpoints are
+  managed via the REST API (create/list/update/delete, rotate-secret, test). Each
+  endpoint is subscribed to one or more canonical tracker-event types and can be scoped
+  to specific tracker_ids (empty = all trackers owned by the account). Payloads are
+  HMAC-signed; the signing_secret is returned exactly once at creation and can be rotated.
+transport: https
+delivery: outgoing HTTP POST to a subscriber-provided URL
+signature:
+  scheme: HMAC
+  header: 'No-* signature header (verify with the endpoint signing_secret)'
+  secret_lifecycle: returned once on creation; rotatable via /webhooks/{id}/rotate-secret
+events:
+  - type: tracker.event.created
+    description: A new canonical tracker event was created.
+  - type: tracker.event.updated
+    description: An existing canonical tracker event was updated/revised.
+management_operations:
+  - POST   /api/v1/webhooks                          # create_webhook_endpoint
+  - GET    /api/v1/webhooks                          # list_webhook_endpoints
+  - PATCH  /api/v1/webhooks/{webhook_id}             # update_webhook_endpoint
+  - DELETE /api/v1/webhooks/{webhook_id}             # delete_webhook_endpoint
+  - POST   /api/v1/webhooks/{webhook_id}/rotate-secret
+  - POST   /api/v1/webhooks/{webhook_id}/test        # test_webhook_endpoint

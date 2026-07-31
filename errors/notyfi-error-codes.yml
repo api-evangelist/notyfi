@@ -1,0 +1,55 @@
+generated: '2026-07-20'
+method: derived
+source: openapi/notyfi-openapi-original.json
+format: custom-envelope
+envelope:
+  shape: '{ "error": { "code": <string>, "message": <string>, "request_id": <string|null> } }'
+  fields:
+    code: Stable machine-readable error code.
+    message: Human-readable detail.
+    request_id: Correlation id, when available.
+  note: >-
+    Notyfi returns one error envelope for every 4xx/5xx on the contract (not RFC 9457
+    problem+json). Some responses carry a documented stable `code` (e.g. feed_deleted,
+    dispatch_unavailable).
+problems:
+  - status: 401
+    title: Unauthorized
+    meaning: Missing or invalid credentials, or missing/invalid Cognito access token.
+  - status: 402
+    title: Payment Required
+    meaning: The requested delivery cadence (instant/hourly) requires the Pro plan.
+  - status: 403
+    title: Forbidden
+    meaning: >-
+      The API key lacks the feeds:write capability required for tracker mutations, or an
+      API key attempted a human-account/billing/key-management action reserved for a
+      signed-in user credential.
+  - status: 404
+    title: Not Found
+    meaning: Feed request / webhook endpoint / API key not found (or owned by another tenant).
+    example_code: not_found
+  - status: 409
+    title: Conflict
+    meaning: >-
+      Account identity or billing-state conflict, webhook endpoint limit reached, active
+      tracker plan limit / verified-account requirement, illegal lifecycle transition, or
+      Idempotency-Key body conflict.
+  - status: 410
+    title: Gone
+    meaning: The owned tracker was soft-deleted.
+    example_code: feed_deleted
+  - status: 422
+    title: Unprocessable Entity
+    meaning: Validation error - invalid body, cadence, event type, unsafe URL, foreign tracker filter, or Idempotency-Key.
+  - status: 429
+    title: Too Many Requests
+    meaning: >-
+      Rate limit exceeded (per-principal fixed window) or rolling tracker-creation limit.
+      Honour the Retry-After and X-RateLimit-* headers.
+  - status: 503
+    title: Service Unavailable
+    meaning: >-
+      Stripe unavailable/not configured, webhook signing not configured, or the retry
+      dispatch queue is unconfigured/unavailable (nothing re-queued).
+    example_code: dispatch_unavailable

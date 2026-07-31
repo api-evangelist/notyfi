@@ -1,0 +1,19 @@
+generated: '2026-07-20'
+method: searched
+host: https://api.notyfi.com
+notes: >-
+  Probed the .well-known discovery surface on the live API host (api.notyfi.com, a real
+  JSON API) on 2026-07-20. None are published. The marketing/docs host (notyfi.com) is a
+  client-rendered SPA whose catch-all returns 200 HTML for every path, so it yields no
+  authentic well-known documents.
+documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404

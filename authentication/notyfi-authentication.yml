@@ -1,0 +1,23 @@
+generated: '2026-07-20'
+method: derived
+source: openapi/notyfi-openapi-original.json
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  description: 'Notyfi API key: `Authorization: Bearer notyfi_mk_...`'
+  sources:
+  - openapi/notyfi-openapi-original.json
+- name: apiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-Api-Key
+  description: Notyfi API key as X-Api-Key.
+  sources:
+  - openapi/notyfi-openapi-original.json

@@ -1,0 +1,59 @@
+generated: '2026-07-20'
+method: derived
+source: openapi/notyfi-openapi-original.json
+notes: Entity-relationship graph derived from the OpenAPI schemas and path structure.
+entities:
+  - name: Account
+    description: The Notyfi tenant/human account (identity, plan, verification state).
+    schema: NotyfiAccountInfo
+  - name: ApiKey
+    description: An issued API key with a capability scope (read, feeds:write).
+    id_prefix: notyfi_mk_
+    schema: ApiKeyInfo
+    scopes: [read, feeds:write]
+  - name: Tracker
+    description: A persistent feed request created from a natural-language query; addressed by opaque public_id.
+    id_prefix: fr_
+    schema: FeedRequest
+    aka: FeedRequest / feed
+  - name: FeedEvent
+    description: A deduplicated canonical event surfaced by a tracker, with source evidence.
+    schema: FeedEvent
+  - name: WebhookEndpoint
+    description: An outgoing HMAC-signed webhook subscription to tracker events.
+    schema: WebhookEndpointInfo
+  - name: NotificationEmail
+    description: A verified recipient email on the account for notifications.
+    schema: NotyfiNotificationEmailInfo
+  - name: Billing
+    description: Plan/limits/usage and Stripe checkout + portal sessions.
+    schema: BillingStatus
+relationships:
+  - from: ApiKey
+    to: Account
+    kind: belongs_to
+    via: account
+  - from: Tracker
+    to: Account
+    kind: belongs_to
+    via: tenant
+  - from: FeedEvent
+    to: Tracker
+    kind: belongs_to
+    via: tracker_id
+  - from: WebhookEndpoint
+    to: Tracker
+    kind: has_many
+    via: tracker_ids
+  - from: WebhookEndpoint
+    to: WebhookEventType
+    kind: has_many
+    via: events
+  - from: NotificationEmail
+    to: Account
+    kind: belongs_to
+    via: account
+  - from: Account
+    to: Tracker
+    kind: has_many
+    via: tenant

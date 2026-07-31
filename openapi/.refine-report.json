@@ -1,0 +1,22 @@
+{
+  "provider": "notyfi",
+  "sources": [
+    "notyfi-account-api-openapi.yml",
+    "notyfi-billing-api-openapi.yml",
+    "notyfi-keys-api-openapi.yml",
+    "notyfi-trackers-api-openapi.yml",
+    "notyfi-webhooks-api-openapi.yml"
+  ],
+  "outputs": [
+    "notyfi-account-api-openapi.yml",
+    "notyfi-billing-api-openapi.yml",
+    "notyfi-keys-api-openapi.yml",
+    "notyfi-trackers-api-openapi.yml",
+    "notyfi-webhooks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

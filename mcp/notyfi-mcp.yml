@@ -1,0 +1,46 @@
+generated: '2026-07-20'
+method: searched
+status: published
+source: https://mcp.notyfi.com
+notes: >-
+  Live hosted MCP server confirmed by JSON-RPC handshake against https://mcp.notyfi.com
+  on 2026-07-20 (initialize + tools/list returned 200). Built on FastMCP. Advertises
+  tools, prompts, and resources capabilities. Every call is scoped to the Notyfi API
+  key supplied in the connection's Authorization/X-Api-Key header; tracker writes
+  require the key's feeds:write scope.
+server:
+  name: Notyfi
+  version: 3.4.2
+  transport: http
+  url: https://mcp.notyfi.com
+  framework: fastmcp
+  capabilities:
+    tools: true
+    prompts: true
+    resources: true
+    logging: true
+  auth: 'Notyfi API key via Authorization: Bearer notyfi_mk_... or X-Api-Key header'
+  instructions: >-
+    Notyfi is persistent discovery: describe what to watch in one sentence, create a
+    tracker once, then retrieve its canonical event feed as new information appears.
+tools:
+  - name: list_trackers
+    description: List the API key's active tenant-owned trackers, newest first.
+    source_operation: openapi/notyfi-openapi-original.json#list_trackers_api_v1_trackers_get
+  - name: get_tracker
+    description: Get one tenant-owned tracker by opaque public_id (fr_...).
+    source_operation: openapi/notyfi-openapi-original.json#get_tracker_api_v1_trackers__public_id__get
+  - name: create_tracker
+    description: >-
+      Create a persistent tracker from a natural-language query (8-500 chars) with a
+      plan-gated cadence and optional idempotency_key. Requires feeds:write.
+    source_operation: openapi/notyfi-openapi-original.json#create_tracker_api_v1_trackers_post
+  - name: list_tracker_events
+    description: Page one live tracker's deduplicated canonical events and source evidence by public_id.
+    source_operation: openapi/notyfi-openapi-original.json#list_tracker_events_api_v1_trackers__public_id__events_get
+  - name: update_tracker_delivery
+    description: Change a tracker's cadence and/or verified-account email toggle. Requires feeds:write.
+    source_operation: openapi/notyfi-openapi-original.json#update_tracker_delivery_api_v1_trackers__public_id__delivery_patch
+  - name: archive_tracker
+    description: Soft-archive a tenant-owned tracker by public_id; idempotent. Requires feeds:write.
+    source_operation: openapi/notyfi-openapi-original.json#archive_tracker_api_v1_trackers__public_id__delete

@@ -1,22 +1,163 @@
 aid: notyfi
 name: Notyfi
-description: Notyfi is a company surfaced as a portfolio company of y-combinator and added to the API
-  Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  Notyfi is a natural-language monitoring and notification service built by Perceptron ML
+  (Y Combinator). Describe what to watch in one sentence -- new lawsuits, layoffs, price
+  drops, listings, RFPs, breaking news -- and Notyfi watches the news, filings, databases,
+  and the open web for it, delivering deduplicated canonical events instantly, hourly,
+  daily, or weekly by email, on a live dashboard, or into agents and workflows via a REST
+  API and a hosted MCP server. The API exposes persistent trackers, their event feeds,
+  HMAC-signed outgoing webhooks, API-key management, account, and Stripe-backed billing.
+  Authenticate with a Notyfi API key (Authorization: Bearer notyfi_mk_... or X-Api-Key).
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://notyfi.com/favicon.ico
 url: https://raw.githubusercontent.com/api-evangelist/notyfi/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - y-combinator
-x-tier: stub
-x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-20'
 tags:
 - Company
-apis: []
+- Notifications
+- Monitoring
+- Webhooks
+- Real Time
+- Agents
+- MCP
+- Alerts
+apis:
+- aid: notyfi:notyfi-account-api
+  name: Notyfi account API
+  description: The account API from Notyfi — 3 operation(s) for account.
+  humanURL: https://notyfi.com/docs
+  baseURL: https://api.notyfi.com/api/v1
+  tags:
+  - account
+  properties:
+  - type: OpenAPI
+    url: openapi/notyfi-account-api-openapi.yml
+  - type: Documentation
+    url: https://notyfi.com/docs
+  - type: APIReference
+    url: https://notyfi.com/docs
+- aid: notyfi:notyfi-billing-api
+  name: Notyfi billing API
+  description: The billing API from Notyfi — 3 operation(s) for billing.
+  humanURL: https://notyfi.com/docs
+  baseURL: https://api.notyfi.com/api/v1
+  tags:
+  - billing
+  properties:
+  - type: OpenAPI
+    url: openapi/notyfi-billing-api-openapi.yml
+  - type: Documentation
+    url: https://notyfi.com/docs
+  - type: APIReference
+    url: https://notyfi.com/docs
+- aid: notyfi:notyfi-keys-api
+  name: Notyfi keys API
+  description: The keys API from Notyfi — 2 operation(s) for keys.
+  humanURL: https://notyfi.com/docs
+  baseURL: https://api.notyfi.com/api/v1
+  tags:
+  - keys
+  properties:
+  - type: OpenAPI
+    url: openapi/notyfi-keys-api-openapi.yml
+  - type: Documentation
+    url: https://notyfi.com/docs
+  - type: APIReference
+    url: https://notyfi.com/docs
+- aid: notyfi:notyfi-trackers-api
+  name: Notyfi trackers API
+  description: The trackers API from Notyfi — 6 operation(s) for trackers.
+  humanURL: https://notyfi.com/docs
+  baseURL: https://api.notyfi.com/api/v1
+  tags:
+  - trackers
+  properties:
+  - type: OpenAPI
+    url: openapi/notyfi-trackers-api-openapi.yml
+  - type: Documentation
+    url: https://notyfi.com/docs
+  - type: APIReference
+    url: https://notyfi.com/docs
+- aid: notyfi:notyfi-webhooks-api
+  name: Notyfi webhooks API
+  description: The webhooks API from Notyfi — 4 operation(s) for webhooks.
+  humanURL: https://notyfi.com/docs
+  baseURL: https://api.notyfi.com/api/v1
+  tags:
+  - webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/notyfi-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://notyfi.com/docs
+  - type: APIReference
+    url: https://notyfi.com/docs
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+common:
+- type: DeveloperPortal
+  url: https://notyfi.com/docs
+- type: Documentation
+  url: https://notyfi.com/docs
+- type: APIReference
+  url: https://notyfi.com/docs
+- type: Pricing
+  url: https://notyfi.com/#pricing
+- type: SignUp
+  url: https://notyfi.com/dashboard/#signup
+- type: TermsOfService
+  url: https://notyfi.com/terms
+- type: PrivacyPolicy
+  url: https://notyfi.com/privacy
+- type: MCPServer
+  url: mcp/notyfi-mcp.yml
+- type: Authentication
+  url: authentication/notyfi-authentication.yml
+- type: Conventions
+  url: conventions/notyfi-conventions.yml
+- type: Idempotency
+  url: conventions/notyfi-conventions.yml
+- type: ErrorCatalog
+  url: errors/notyfi-error-codes.yml
+- type: Lifecycle
+  url: lifecycle/notyfi-lifecycle.yml
+- type: Webhooks
+  url: asyncapi/notyfi-webhooks.yml
+- type: Conformance
+  url: conformance/notyfi-conformance.yml
+- type: DataModel
+  url: data-model/notyfi-data-model.yml
+- type: LLMsTxt
+  url: llms/notyfi-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: AgenticAccess
+  url: agentic-access/notyfi-agentic-access.yml
+- type: DomainSecurity
+  url: security/notyfi-domain-security.yml
+x-enrichment:
+  date: '2026-07-20'
+  status: enriched
+  artifacts_added: 17
+  pass: local-v1

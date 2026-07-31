@@ -1,0 +1,12 @@
+generated: '2026-07-20'
+method: generated
+source: openapi/notyfi-openapi-original.json
+skills:
+  - file: notyfi-create-tracker-and-read-events.md
+    name: Create a Notyfi tracker and read its events
+    api: openapi/notyfi-openapi-original.json
+    operations: [create_tracker_api_v1_trackers_post, list_trackers_api_v1_trackers_get, get_tracker_api_v1_trackers__public_id__get, get_tracker_progress_api_v1_trackers__public_id__progress_get, list_tracker_events_api_v1_trackers__public_id__events_get]
+  - file: notyfi-subscribe-webhooks.md
+    name: Subscribe to Notyfi tracker events over webhooks
+    api: openapi/notyfi-openapi-original.json
+    operations: [create_webhook_endpoint_api_v1_webhooks_post, list_webhook_endpoints_api_v1_webhooks_get, update_webhook_endpoint_api_v1_webhooks__webhook_id__patch, test_webhook_endpoint_api_v1_webhooks__webhook_id__test_post, rotate_webhook_secret_api_v1_webhooks__webhook_id__rotate_secret_post, delete_webhook_endpoint_api_v1_webhooks__webhook_id__delete]
