@@ -1,0 +1,98 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Notyfi account keys API",
+    "version": "1.2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "keys",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List the caller's tenant's API keys",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.notyfi.com/api/v1/keys",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "Every API key owned by the caller's tenant (live + revoked), WITHOUT key material -- only the\nbranded display ``prefix`` (null for keys minted before prefixes were stored) + metadata. The\nplaintext is shown exactly once, at mint time, and is unrecoverable afterwards."
+        },
+        {
+          "info": {
+            "name": "Mint a new API key (the plaintext is returned ONCE, here)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.notyfi.com/api/v1/keys",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Mint a key owned by the caller's tenant. ``key`` (the plaintext) appears in THIS response ONLY --\nAtlas stores just its sha256 hash, so it can never be retrieved again; save it immediately."
+        },
+        {
+          "info": {
+            "name": "Revoke an API key",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.notyfi.com/api/v1/keys/:key_id",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "key_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "REVOKE (not delete) a key owned by the caller's tenant: the row stays listed (``revoked: true``)\nbut never authenticates again. 404 if the id is missing or another tenant's; 204 on success."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

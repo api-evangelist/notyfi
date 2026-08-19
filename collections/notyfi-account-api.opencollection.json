@@ -1,0 +1,192 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Notyfi account API",
+    "version": "1.2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "account",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Read/bootstrap the signed-in consumer account",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.notyfi.com/api/v1/account",
+            "headers": [
+              {
+                "name": "X-Notyfi-ID-Token",
+                "value": ""
+              },
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "The Bearer access token authorizes; an optional, independently verified same-sub ID token\nbootstraps/refreshes the account's verified email."
+        },
+        {
+          "info": {
+            "name": "Update the signed-in consumer profile and workspace",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.notyfi.com/api/v1/account",
+            "headers": [
+              {
+                "name": "X-Notyfi-ID-Token",
+                "value": ""
+              },
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update the signed-in consumer profile and workspace"
+        },
+        {
+          "info": {
+            "name": "Confirm and begin permanent account deletion",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.notyfi.com/api/v1/account",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Confirm and begin permanent account deletion"
+        },
+        {
+          "info": {
+            "name": "Add or resend verification for a notification email",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.notyfi.com/api/v1/account/notification-emails",
+            "headers": [
+              {
+                "name": "X-Notyfi-ID-Token",
+                "value": ""
+              },
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add or resend verification for a notification email"
+        },
+        {
+          "info": {
+            "name": "Enable or disable a verified notification email",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.notyfi.com/api/v1/account/notification-emails/:recipient_id",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "recipient_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Enable or disable a verified notification email"
+        },
+        {
+          "info": {
+            "name": "Remove a secondary notification email",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.notyfi.com/api/v1/account/notification-emails/:recipient_id",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "recipient_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Remove a secondary notification email"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

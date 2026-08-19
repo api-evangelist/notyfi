@@ -1,0 +1,103 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Notyfi account billing API",
+    "version": "1.2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "billing",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Current plan, limits, and tracker usage",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.notyfi.com/api/v1/billing",
+            "headers": [
+              {
+                "name": "X-Notyfi-ID-Token",
+                "value": ""
+              },
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "Current plan, limits, and tracker usage"
+        },
+        {
+          "info": {
+            "name": "Create or resume a Stripe-hosted Pro Checkout session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.notyfi.com/api/v1/billing/checkout",
+            "headers": [
+              {
+                "name": "X-Notyfi-ID-Token",
+                "value": ""
+              },
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create or resume a Stripe-hosted Pro Checkout session"
+        },
+        {
+          "info": {
+            "name": "Create a short-lived Stripe Customer Portal session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.notyfi.com/api/v1/billing/portal",
+            "headers": [
+              {
+                "name": "X-Notyfi-ID-Token",
+                "value": ""
+              },
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "Create a short-lived Stripe Customer Portal session"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

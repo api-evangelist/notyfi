@@ -1,0 +1,190 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Notyfi account webhooks API",
+    "version": "1.2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "webhooks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List outgoing tracker webhook endpoints",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.notyfi.com/api/v1/webhooks",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "List outgoing tracker webhook endpoints"
+        },
+        {
+          "info": {
+            "name": "Register an outgoing tracker webhook",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.notyfi.com/api/v1/webhooks",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "The HMAC ``signing_secret`` is returned exactly once. Empty ``tracker_ids`` means all of the\naccount's trackers; otherwise every listed opaque tracker ID must be owned by the account.\n\nVerify ``Notyfi-Signature: v1=<hex>`` as HMAC-SHA256 over\n``<Notyfi-Timestamp>.<raw request body>``. Use ``Notyfi-Event-Id`` for event identity and\n``Notyfi-Delivery-Id`` to make retries idempotent. Notyfi treats any 2xx as delivered and retries\nfailures with bounded exponential backoff."
+        },
+        {
+          "info": {
+            "name": "Update or disable an outgoing tracker webhook",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.notyfi.com/api/v1/webhooks/:webhook_id",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "webhook_id",
+                "value": "",
+                "type": "path",
+                "description": "Opaque Notyfi webhook endpoint ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update or disable an outgoing tracker webhook"
+        },
+        {
+          "info": {
+            "name": "Delete an outgoing tracker webhook",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.notyfi.com/api/v1/webhooks/:webhook_id",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "webhook_id",
+                "value": "",
+                "type": "path",
+                "description": "Opaque Notyfi webhook endpoint ID."
+              }
+            ]
+          },
+          "docs": "Delete an outgoing tracker webhook"
+        },
+        {
+          "info": {
+            "name": "Rotate a webhook signing secret",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.notyfi.com/api/v1/webhooks/:webhook_id/rotate-secret",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "webhook_id",
+                "value": "",
+                "type": "path",
+                "description": "Opaque Notyfi webhook endpoint ID."
+              }
+            ]
+          },
+          "docs": "Rotate a webhook signing secret"
+        },
+        {
+          "info": {
+            "name": "Send a signed webhook.test event now",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.notyfi.com/api/v1/webhooks/:webhook_id/test",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "webhook_id",
+                "value": "",
+                "type": "path",
+                "description": "Opaque Notyfi webhook endpoint ID."
+              }
+            ]
+          },
+          "docs": "Send a signed webhook.test event now"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,270 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Notyfi account trackers API",
+    "version": "1.2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "trackers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List the caller's Notyfi trackers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.notyfi.com/api/v1/trackers",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "List the caller's Notyfi trackers"
+        },
+        {
+          "info": {
+            "name": "Create a Notyfi tracker",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.notyfi.com/api/v1/trackers",
+            "headers": [
+              {
+                "name": "X-Notyfi-ID-Token",
+                "value": ""
+              },
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              },
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Product-named alias of feed-request creation; returns the canonical ``public_id``."
+        },
+        {
+          "info": {
+            "name": "Get one tracker by opaque public id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.notyfi.com/api/v1/trackers/:public_id",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "path",
+                "description": "Opaque tracker id returned by create/list (not the internal database id or feed slug)."
+              }
+            ]
+          },
+          "docs": "Get one tracker by opaque public id"
+        },
+        {
+          "info": {
+            "name": "Archive a tracker by opaque public id",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.notyfi.com/api/v1/trackers/:public_id",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "path",
+                "description": "Opaque tracker id returned by create/list (not the internal database id or feed slug)."
+              }
+            ]
+          },
+          "docs": "Archive a tracker by opaque public id"
+        },
+        {
+          "info": {
+            "name": "Get tracker research/build progress by opaque public id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.notyfi.com/api/v1/trackers/:public_id/progress",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "path",
+                "description": "Opaque tracker id returned by create/list (not the internal database id or feed slug)."
+              }
+            ]
+          },
+          "docs": "Get tracker research/build progress by opaque public id"
+        },
+        {
+          "info": {
+            "name": "List a live tracker's canonical events by opaque public id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.notyfi.com/api/v1/trackers/:public_id/events",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "path",
+                "description": "Opaque tracker id returned by create/list (not the internal database id or feed slug)."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List a live tracker's canonical events by opaque public id"
+        },
+        {
+          "info": {
+            "name": "Update tracker delivery by opaque public id",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.notyfi.com/api/v1/trackers/:public_id/delivery",
+            "headers": [
+              {
+                "name": "X-Notyfi-ID-Token",
+                "value": ""
+              },
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "path",
+                "description": "Opaque tracker id returned by create/list (not the internal database id or feed slug)."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update tracker delivery by opaque public id"
+        },
+        {
+          "info": {
+            "name": "Retry a stalled tracker by opaque public id",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.notyfi.com/api/v1/trackers/:public_id/retry",
+            "headers": [
+              {
+                "name": "authorization",
+                "value": ""
+              },
+              {
+                "name": "x-api-key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "path",
+                "description": "Opaque tracker id returned by create/list (not the internal database id or feed slug)."
+              }
+            ]
+          },
+          "docs": "Retry a stalled tracker by opaque public id"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
