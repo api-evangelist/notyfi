@@ -32,6 +32,15 @@ created: '2026-07-17'
 modified: '2026-07-20'
 tags:
 - Company
+- Notification
+- Monitoring
+- Webhook
+- Real-Time
+- Agents
+- MCP
+- Alerts
+tags_raw:
+- Company
 - Notifications
 - Monitoring
 - Webhooks
@@ -46,6 +55,8 @@ apis:
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
   tags:
+  - Account
+  tags_raw:
   - account
   properties:
   - type: OpenAPI
@@ -60,6 +71,8 @@ apis:
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
   tags:
+  - Billing
+  tags_raw:
   - billing
   properties:
   - type: OpenAPI
@@ -74,6 +87,8 @@ apis:
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
   tags:
+  - Keys
+  tags_raw:
   - keys
   properties:
   - type: OpenAPI
@@ -88,6 +103,8 @@ apis:
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
   tags:
+  - Trackers
+  tags_raw:
   - trackers
   properties:
   - type: OpenAPI
@@ -102,6 +119,8 @@ apis:
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
   tags:
+  - Webhook
+  tags_raw:
   - webhooks
   properties:
   - type: OpenAPI
