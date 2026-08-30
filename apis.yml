@@ -115,7 +115,7 @@ apis:
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
   tags:
-  - Trackers
+  - trackers
   tags_raw:
   - trackers
   properties:
