@@ -1,14 +1,12 @@
 aid: notyfi
 name: Notyfi
-description: >-
-  Notyfi is a natural-language monitoring and notification service built by Perceptron ML
-  (Y Combinator). Describe what to watch in one sentence -- new lawsuits, layoffs, price
-  drops, listings, RFPs, breaking news -- and Notyfi watches the news, filings, databases,
-  and the open web for it, delivering deduplicated canonical events instantly, hourly,
-  daily, or weekly by email, on a live dashboard, or into agents and workflows via a REST
-  API and a hosted MCP server. The API exposes persistent trackers, their event feeds,
-  HMAC-signed outgoing webhooks, API-key management, account, and Stripe-backed billing.
-  Authenticate with a Notyfi API key (Authorization: Bearer notyfi_mk_... or X-Api-Key).
+description: 'Notyfi is a natural-language monitoring and notification service built by Perceptron ML
+  (Y Combinator). Describe what to watch in one sentence -- new lawsuits, layoffs, price drops, listings,
+  RFPs, breaking news -- and Notyfi watches the news, filings, databases, and the open web for it, delivering
+  deduplicated canonical events instantly, hourly, daily, or weekly by email, on a live dashboard, or
+  into agents and workflows via a REST API and a hosted MCP server. The API exposes persistent trackers,
+  their event feeds, HMAC-signed outgoing webhooks, API-key management, account, and Stripe-backed billing.
+  Authenticate with a Notyfi API key (Authorization: Bearer notyfi_mk_... or X-Api-Key).'
 deliveryModel:
   model: saas
   open_source: false
@@ -42,7 +40,7 @@ x-backed-by:
 - y-combinator
 specificationVersion: '0.23'
 created: '2026-07-17'
-modified: '2026-07-20'
+modified: '2026-09-16'
 tags:
 - Company
 - Notification
@@ -148,6 +146,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Website
+  url: https://notyfi.com
 - type: Overlay
   url: overlays/notyfi-openapi-overlay.yaml
 - type: DeveloperPortal
