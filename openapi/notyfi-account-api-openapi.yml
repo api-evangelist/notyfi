@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Notyfi account API
+  title: Notyfi Account API
   version: 1.2.0
   description: 'Track anything in a sentence and get notified the moment it happens -- by email, REST API, or MCP. Authenticate every request with a Notyfi API key (`Authorization: Bearer notyfi_mk_...`). Manage keys in your dashboard.'
 servers:
@@ -9,12 +9,12 @@ security:
 - bearerAuth: []
 - apiKeyAuth: []
 tags:
-- name: account
+- name: Account
 paths:
   /api/v1/account:
     get:
       tags:
-      - account
+      - Account
       summary: Read/bootstrap the signed-in consumer account
       description: 'The Bearer access token authorizes; an optional, independently verified same-sub ID token
 
@@ -90,7 +90,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     patch:
       tags:
-      - account
+      - Account
       summary: Update the signed-in consumer profile and workspace
       operationId: patch_account_api_v1_account_patch
       parameters:
@@ -169,7 +169,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
-      - account
+      - Account
       summary: Confirm and begin permanent account deletion
       operationId: delete_account_api_v1_account_delete
       parameters:
@@ -241,7 +241,7 @@ paths:
   /api/v1/account/notification-emails:
     post:
       tags:
-      - account
+      - Account
       summary: Add or resend verification for a notification email
       operationId: add_notification_email_api_v1_account_notification_emails_post
       parameters:
@@ -321,7 +321,7 @@ paths:
   /api/v1/account/notification-emails/{recipient_id}:
     patch:
       tags:
-      - account
+      - Account
       summary: Enable or disable a verified notification email
       operationId: update_notification_email_api_v1_account_notification_emails__recipient_id__patch
       parameters:
@@ -398,7 +398,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     delete:
       tags:
-      - account
+      - Account
       summary: Remove a secondary notification email
       operationId: delete_notification_email_api_v1_account_notification_emails__recipient_id__delete
       parameters:
@@ -465,6 +465,112 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    NotyfiAccountDeleteConfirm:
+      properties:
+        confirmation:
+          type: string
+          const: DELETE
+          title: Confirmation
+      additionalProperties: false
+      type: object
+      required:
+      - confirmation
+      title: NotyfiAccountDeleteConfirm
+    NotyfiWorkspace:
+      properties:
+        folders:
+          items:
+            $ref: '#/components/schemas/NotyfiWorkspaceFolder'
+          type: array
+          maxItems: 100
+          title: Folders
+        tracker_labels:
+          additionalProperties:
+            type: string
+          type: object
+          title: Tracker Labels
+      additionalProperties: false
+      type: object
+      title: NotyfiWorkspace
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    NotyfiAccountPatch:
+      properties:
+        expected_revision:
+          type: integer
+          minimum: 0.0
+          title: Expected Revision
+        display_name:
+          anyOf:
+          - type: string
+            maxLength: 80
+            minLength: 1
+          - type: 'null'
+          title: Display Name
+        workspace:
+          anyOf:
+          - $ref: '#/components/schemas/NotyfiWorkspace'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      required:
+      - expected_revision
+      title: NotyfiAccountPatch
+    ErrorBody:
+      properties:
+        code:
+          type: string
+          title: Code
+          description: Stable machine-readable error code.
+        message:
+          type: string
+          title: Message
+          description: Human-readable detail.
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+          description: Correlation id, when available.
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorBody
+    NotyfiNotificationEmailUpdate:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+      additionalProperties: false
+      type: object
+      required:
+      - enabled
+      title: NotyfiNotificationEmailUpdate
     NotyfiNotificationEmailInfo:
       properties:
         id:
@@ -495,63 +601,6 @@ components:
       - id
       - email
       title: NotyfiNotificationEmailInfo
-    NotyfiNotificationEmailUpdate:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-      additionalProperties: false
-      type: object
-      required:
-      - enabled
-      title: NotyfiNotificationEmailUpdate
-    NotyfiNotificationEmailCreate:
-      properties:
-        email:
-          type: string
-          maxLength: 254
-          minLength: 3
-          title: Email
-      additionalProperties: false
-      type: object
-      required:
-      - email
-      title: NotyfiNotificationEmailCreate
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     NotyfiWorkspaceFolder:
       properties:
         id:
@@ -577,44 +626,67 @@ components:
       - id
       - name
       title: NotyfiWorkspaceFolder
-    NotyfiWorkspace:
+    NotyfiAccountDeletionInfo:
       properties:
-        folders:
-          items:
-            $ref: '#/components/schemas/NotyfiWorkspaceFolder'
-          type: array
-          maxItems: 100
-          title: Folders
-        tracker_labels:
-          additionalProperties:
-            type: string
-          type: object
-          title: Tracker Labels
-      additionalProperties: false
-      type: object
-      title: NotyfiWorkspace
-    NotyfiAccountPatch:
-      properties:
-        expected_revision:
-          type: integer
-          minimum: 0.0
-          title: Expected Revision
-        display_name:
+        job_id:
+          type: string
+          title: Job Id
+        status:
+          type: string
+          title: Status
+        requested_at:
+          type: string
+          title: Requested At
+        local_completed_at:
           anyOf:
           - type: string
-            maxLength: 80
-            minLength: 1
           - type: 'null'
-          title: Display Name
-        workspace:
-          anyOf:
-          - $ref: '#/components/schemas/NotyfiWorkspace'
-          - type: 'null'
+          title: Local Completed At
+        external_cleanup_required:
+          items:
+            type: string
+          type: array
+          title: External Cleanup Required
+      type: object
+      required:
+      - job_id
+      - status
+      - requested_at
+      title: NotyfiAccountDeletionInfo
+    NotyfiNotificationEmailCreate:
+      properties:
+        email:
+          type: string
+          maxLength: 254
+          minLength: 3
+          title: Email
       additionalProperties: false
       type: object
       required:
-      - expected_revision
-      title: NotyfiAccountPatch
+      - email
+      title: NotyfiNotificationEmailCreate
+    Error:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+      type: object
+      required:
+      - error
+      title: Error
+      description: The single error response shape for every 4xx/5xx on the contract.
+      example:
+        error:
+          code: not_found
+          message: lead not found
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     NotyfiAccountInfo:
       properties:
         tenant_id:
@@ -656,78 +728,6 @@ components:
         ``email`` is populated only from a separately verified, same-sub Cognito ID token.  It is never
 
         accepted from an ordinary request body or copied back from Stripe.'
-    Error:
-      properties:
-        error:
-          $ref: '#/components/schemas/ErrorBody'
-      type: object
-      required:
-      - error
-      title: Error
-      description: The single error response shape for every 4xx/5xx on the contract.
-      example:
-        error:
-          code: not_found
-          message: lead not found
-    NotyfiAccountDeletionInfo:
-      properties:
-        job_id:
-          type: string
-          title: Job Id
-        status:
-          type: string
-          title: Status
-        requested_at:
-          type: string
-          title: Requested At
-        local_completed_at:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Local Completed At
-        external_cleanup_required:
-          items:
-            type: string
-          type: array
-          title: External Cleanup Required
-      type: object
-      required:
-      - job_id
-      - status
-      - requested_at
-      title: NotyfiAccountDeletionInfo
-    ErrorBody:
-      properties:
-        code:
-          type: string
-          title: Code
-          description: Stable machine-readable error code.
-        message:
-          type: string
-          title: Message
-          description: Human-readable detail.
-        request_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Request Id
-          description: Correlation id, when available.
-      type: object
-      required:
-      - code
-      - message
-      title: ErrorBody
-    NotyfiAccountDeleteConfirm:
-      properties:
-        confirmation:
-          type: string
-          const: DELETE
-          title: Confirmation
-      additionalProperties: false
-      type: object
-      required:
-      - confirmation
-      title: NotyfiAccountDeleteConfirm
   securitySchemes:
     bearerAuth:
       type: http

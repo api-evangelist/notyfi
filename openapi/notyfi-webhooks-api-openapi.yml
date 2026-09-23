@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Notyfi account webhooks API
+  title: Notyfi Webhooks API
   version: 1.2.0
   description: 'Track anything in a sentence and get notified the moment it happens -- by email, REST API, or MCP. Authenticate every request with a Notyfi API key (`Authorization: Bearer notyfi_mk_...`). Manage keys in your dashboard.'
 servers:
@@ -9,12 +9,12 @@ security:
 - bearerAuth: []
 - apiKeyAuth: []
 tags:
-- name: webhooks
+- name: Webhooks
 paths:
   /api/v1/webhooks:
     get:
       tags:
-      - webhooks
+      - Webhooks
       summary: List outgoing tracker webhook endpoints
       operationId: list_webhook_endpoints_api_v1_webhooks_get
       parameters:
@@ -64,16 +64,16 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
     post:
       tags:
-      - webhooks
+      - Webhooks
       summary: Register an outgoing tracker webhook
       description: 'The HMAC ``signing_secret`` is returned exactly once. Empty ``tracker_ids`` means all of the
 
         account''s trackers; otherwise every listed opaque tracker ID must be owned by the account.
 
 
-        Verify ``Notyfi-Signature: v1=<hex>`` as HMAC-SHA256 over
+        Verify ``Notyfi-Signature: v1=`` as HMAC-SHA256 over
 
-        ``<Notyfi-Timestamp>.<raw request body>``. Use ``Notyfi-Event-Id`` for event identity and
+        ``.``. Use ``Notyfi-Event-Id`` for event identity and
 
         ``Notyfi-Delivery-Id`` to make retries idempotent. Notyfi treats any 2xx as delivered and retries
 
@@ -148,7 +148,7 @@ paths:
   /api/v1/webhooks/{webhook_id}:
     patch:
       tags:
-      - webhooks
+      - Webhooks
       summary: Update or disable an outgoing tracker webhook
       operationId: update_webhook_endpoint_api_v1_webhooks__webhook_id__patch
       parameters:
@@ -236,7 +236,7 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-      - webhooks
+      - Webhooks
       summary: Delete an outgoing tracker webhook
       operationId: delete_webhook_endpoint_api_v1_webhooks__webhook_id__delete
       parameters:
@@ -303,7 +303,7 @@ paths:
   /api/v1/webhooks/{webhook_id}/rotate-secret:
     post:
       tags:
-      - webhooks
+      - Webhooks
       summary: Rotate a webhook signing secret
       operationId: rotate_webhook_secret_api_v1_webhooks__webhook_id__rotate_secret_post
       parameters:
@@ -386,7 +386,7 @@ paths:
   /api/v1/webhooks/{webhook_id}/test:
     post:
       tags:
-      - webhooks
+      - Webhooks
       summary: Send a signed webhook.test event now
       operationId: test_webhook_endpoint_api_v1_webhooks__webhook_id__test_post
       parameters:
@@ -456,108 +456,29 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    WebhookEventType:
-      type: string
-      enum:
-      - tracker.event.created
-      - tracker.event.updated
-      title: WebhookEventType
-      description: Canonical tracker-event changes available to outgoing Notyfi webhooks.
-    HTTPValidationError:
+    WebhookTestResult:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    WebhookEndpointCreate:
-      properties:
-        url:
-          type: string
-          maxLength: 2048
-          minLength: 1
-          title: Url
-        events:
-          items:
-            $ref: '#/components/schemas/WebhookEventType'
-          type: array
-          maxItems: 2
-          minItems: 1
-          title: Events
-        tracker_ids:
-          items:
-            type: string
-          type: array
-          maxItems: 100
-          title: Tracker Ids
-      additionalProperties: false
-      type: object
-      required:
-      - url
-      title: WebhookEndpointCreate
-      description: Register an account webhook; an empty tracker list subscribes to every owned tracker.
-      example:
-        events:
-        - tracker.event.created
-        - tracker.event.updated
-        tracker_ids: []
-        url: https://example.com/notyfi-webhook
-    WebhookSecretRotated:
-      properties:
-        id:
-          type: string
-          title: Id
-        signing_secret:
-          type: string
-          title: Signing Secret
-          description: Replacement HMAC signing secret, returned exactly once.
-      type: object
-      required:
-      - id
-      - signing_secret
-      title: WebhookSecretRotated
-    WebhookEndpointInfo:
-      properties:
-        id:
-          type: string
-          title: Id
-          description: Opaque webhook endpoint ID.
-        url:
-          type: string
-          title: Url
-        enabled:
+        delivered:
           type: boolean
-          title: Enabled
-        events:
-          items:
-            $ref: '#/components/schemas/WebhookEventType'
-          type: array
-          title: Events
-        tracker_ids:
-          items:
-            type: string
-          type: array
-          title: Tracker Ids
-          description: Empty means every tracker owned by the account.
-        created_at:
+          title: Delivered
+        event_id:
+          type: string
+          title: Event Id
+        http_status:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Http Status
+        error:
           anyOf:
           - type: string
           - type: 'null'
-          title: Created At
-        updated_at:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Updated At
+          title: Error
       type: object
       required:
-      - id
-      - url
-      - enabled
-      - events
-      title: WebhookEndpointInfo
+      - delivered
+      - event_id
+      title: WebhookTestResult
     ValidationError:
       properties:
         loc:
@@ -584,29 +505,47 @@ components:
       - msg
       - type
       title: ValidationError
-    WebhookTestResult:
+    WebhookEventType:
+      type: string
+      enum:
+      - tracker.event.created
+      - tracker.event.updated
+      title: WebhookEventType
+      description: Canonical tracker-event changes available to outgoing Notyfi webhooks.
+    ErrorBody:
       properties:
-        delivered:
-          type: boolean
-          title: Delivered
-        event_id:
+        code:
           type: string
-          title: Event Id
-        http_status:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Http Status
-        error:
+          title: Code
+          description: Stable machine-readable error code.
+        message:
+          type: string
+          title: Message
+          description: Human-readable detail.
+        request_id:
           anyOf:
           - type: string
           - type: 'null'
-          title: Error
+          title: Request Id
+          description: Correlation id, when available.
       type: object
       required:
-      - delivered
-      - event_id
-      title: WebhookTestResult
+      - code
+      - message
+      title: ErrorBody
+    Error:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+      type: object
+      required:
+      - error
+      title: Error
+      description: The single error response shape for every 4xx/5xx on the contract.
+      example:
+        error:
+          code: not_found
+          message: lead not found
     WebhookEndpointCreated:
       properties:
         id:
@@ -652,40 +591,101 @@ components:
       - events
       - signing_secret
       title: WebhookEndpointCreated
-    Error:
+    WebhookEndpointCreate:
       properties:
-        error:
-          $ref: '#/components/schemas/ErrorBody'
+        url:
+          type: string
+          maxLength: 2048
+          minLength: 1
+          title: Url
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+          maxItems: 2
+          minItems: 1
+          title: Events
+        tracker_ids:
+          items:
+            type: string
+          type: array
+          maxItems: 100
+          title: Tracker Ids
+      additionalProperties: false
       type: object
       required:
-      - error
-      title: Error
-      description: The single error response shape for every 4xx/5xx on the contract.
+      - url
+      title: WebhookEndpointCreate
+      description: Register an account webhook; an empty tracker list subscribes to every owned tracker.
       example:
-        error:
-          code: not_found
-          message: lead not found
-    ErrorBody:
+        events:
+        - tracker.event.created
+        - tracker.event.updated
+        tracker_ids: []
+        url: https://example.com/notyfi-webhook
+    WebhookEndpointInfo:
       properties:
-        code:
+        id:
           type: string
-          title: Code
-          description: Stable machine-readable error code.
-        message:
+          title: Id
+          description: Opaque webhook endpoint ID.
+        url:
           type: string
-          title: Message
-          description: Human-readable detail.
-        request_id:
+          title: Url
+        enabled:
+          type: boolean
+          title: Enabled
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+          title: Events
+        tracker_ids:
+          items:
+            type: string
+          type: array
+          title: Tracker Ids
+          description: Empty means every tracker owned by the account.
+        created_at:
           anyOf:
           - type: string
           - type: 'null'
-          title: Request Id
-          description: Correlation id, when available.
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Updated At
       type: object
       required:
-      - code
-      - message
-      title: ErrorBody
+      - id
+      - url
+      - enabled
+      - events
+      title: WebhookEndpointInfo
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    WebhookSecretRotated:
+      properties:
+        id:
+          type: string
+          title: Id
+        signing_secret:
+          type: string
+          title: Signing Secret
+          description: Replacement HMAC signing secret, returned exactly once.
+      type: object
+      required:
+      - id
+      - signing_secret
+      title: WebhookSecretRotated
     WebhookEndpointUpdate:
       properties:
         url:

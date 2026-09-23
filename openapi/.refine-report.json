@@ -1,11 +1,7 @@
 {
   "provider": "notyfi",
   "sources": [
-    "notyfi-account-api-openapi.yml",
-    "notyfi-billing-api-openapi.yml",
-    "notyfi-keys-api-openapi.yml",
-    "notyfi-trackers-api-openapi.yml",
-    "notyfi-webhooks-api-openapi.yml"
+    "_original/notyfi-openapi-original.json"
   ],
   "outputs": [
     "notyfi-account-api-openapi.yml",
@@ -17,6 +13,16 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "notyfi-openapi-original.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "notyfi-account-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "notyfi-billing-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "notyfi-keys-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "notyfi-trackers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "notyfi-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
