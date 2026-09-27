@@ -456,55 +456,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    WebhookTestResult:
-      properties:
-        delivered:
-          type: boolean
-          title: Delivered
-        event_id:
-          type: string
-          title: Event Id
-        http_status:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Http Status
-        error:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Error
-      type: object
-      required:
-      - delivered
-      - event_id
-      title: WebhookTestResult
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     WebhookEventType:
       type: string
       enum:
@@ -533,6 +484,78 @@ components:
       - code
       - message
       title: ErrorBody
+    WebhookTestResult:
+      properties:
+        delivered:
+          type: boolean
+          title: Delivered
+        event_id:
+          type: string
+          title: Event Id
+        http_status:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Http Status
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      required:
+      - delivered
+      - event_id
+      title: WebhookTestResult
+    WebhookSecretRotated:
+      properties:
+        id:
+          type: string
+          title: Id
+        signing_secret:
+          type: string
+          title: Signing Secret
+          description: Replacement HMAC signing secret, returned exactly once.
+      type: object
+      required:
+      - id
+      - signing_secret
+      title: WebhookSecretRotated
+    WebhookEndpointUpdate:
+      properties:
+        url:
+          anyOf:
+          - type: string
+            maxLength: 2048
+            minLength: 1
+          - type: 'null'
+          title: Url
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+        events:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/WebhookEventType'
+            type: array
+            maxItems: 2
+            minItems: 1
+          - type: 'null'
+          title: Events
+        tracker_ids:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            maxItems: 100
+          - type: 'null'
+          title: Tracker Ids
+      additionalProperties: false
+      type: object
+      title: WebhookEndpointUpdate
+      description: Partial endpoint update. An explicit empty tracker list restores account-wide delivery.
     Error:
       properties:
         error:
@@ -546,51 +569,32 @@ components:
         error:
           code: not_found
           message: lead not found
-    WebhookEndpointCreated:
+    ValidationError:
       properties:
-        id:
-          type: string
-          title: Id
-          description: Opaque webhook endpoint ID.
-        url:
-          type: string
-          title: Url
-        enabled:
-          type: boolean
-          title: Enabled
-        events:
+        loc:
           items:
-            $ref: '#/components/schemas/WebhookEventType'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Events
-        tracker_ids:
-          items:
-            type: string
-          type: array
-          title: Tracker Ids
-          description: Empty means every tracker owned by the account.
-        created_at:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Created At
-        updated_at:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Updated At
-        signing_secret:
+          title: Location
+        msg:
           type: string
-          title: Signing Secret
-          description: HMAC signing secret, returned exactly once. Store it securely.
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
-      - id
-      - url
-      - enabled
-      - events
-      - signing_secret
-      title: WebhookEndpointCreated
+      - loc
+      - msg
+      - type
+      title: ValidationError
     WebhookEndpointCreate:
       properties:
         url:
@@ -672,55 +676,51 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    WebhookSecretRotated:
+    WebhookEndpointCreated:
       properties:
         id:
           type: string
           title: Id
+          description: Opaque webhook endpoint ID.
+        url:
+          type: string
+          title: Url
+        enabled:
+          type: boolean
+          title: Enabled
+        events:
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          type: array
+          title: Events
+        tracker_ids:
+          items:
+            type: string
+          type: array
+          title: Tracker Ids
+          description: Empty means every tracker owned by the account.
+        created_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Updated At
         signing_secret:
           type: string
           title: Signing Secret
-          description: Replacement HMAC signing secret, returned exactly once.
+          description: HMAC signing secret, returned exactly once. Store it securely.
       type: object
       required:
       - id
+      - url
+      - enabled
+      - events
       - signing_secret
-      title: WebhookSecretRotated
-    WebhookEndpointUpdate:
-      properties:
-        url:
-          anyOf:
-          - type: string
-            maxLength: 2048
-            minLength: 1
-          - type: 'null'
-          title: Url
-        enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Enabled
-        events:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/WebhookEventType'
-            type: array
-            maxItems: 2
-            minItems: 1
-          - type: 'null'
-          title: Events
-        tracker_ids:
-          anyOf:
-          - items:
-              type: string
-            type: array
-            maxItems: 100
-          - type: 'null'
-          title: Tracker Ids
-      additionalProperties: false
-      type: object
-      title: WebhookEndpointUpdate
-      description: Partial endpoint update. An explicit empty tracker list restores account-wide delivery.
+      title: WebhookEndpointCreated
   securitySchemes:
     bearerAuth:
       type: http

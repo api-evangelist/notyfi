@@ -465,33 +465,98 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    NotyfiAccountDeleteConfirm:
+    ErrorBody:
       properties:
-        confirmation:
+        code:
           type: string
-          const: DELETE
-          title: Confirmation
+          title: Code
+          description: Stable machine-readable error code.
+        message:
+          type: string
+          title: Message
+          description: Human-readable detail.
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+          description: Correlation id, when available.
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorBody
+    NotyfiNotificationEmailCreate:
+      properties:
+        email:
+          type: string
+          maxLength: 254
+          minLength: 3
+          title: Email
       additionalProperties: false
       type: object
       required:
-      - confirmation
-      title: NotyfiAccountDeleteConfirm
-    NotyfiWorkspace:
+      - email
+      title: NotyfiNotificationEmailCreate
+    NotyfiNotificationEmailUpdate:
       properties:
-        folders:
-          items:
-            $ref: '#/components/schemas/NotyfiWorkspaceFolder'
-          type: array
-          maxItems: 100
-          title: Folders
-        tracker_labels:
-          additionalProperties:
-            type: string
-          type: object
-          title: Tracker Labels
+        enabled:
+          type: boolean
+          title: Enabled
       additionalProperties: false
       type: object
-      title: NotyfiWorkspace
+      required:
+      - enabled
+      title: NotyfiNotificationEmailUpdate
+    NotyfiAccountPatch:
+      properties:
+        expected_revision:
+          type: integer
+          minimum: 0.0
+          title: Expected Revision
+        display_name:
+          anyOf:
+          - type: string
+            maxLength: 80
+            minLength: 1
+          - type: 'null'
+          title: Display Name
+        workspace:
+          anyOf:
+          - $ref: '#/components/schemas/NotyfiWorkspace'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      required:
+      - expected_revision
+      title: NotyfiAccountPatch
+    NotyfiAccountDeletionInfo:
+      properties:
+        job_id:
+          type: string
+          title: Job Id
+        status:
+          type: string
+          title: Status
+        requested_at:
+          type: string
+          title: Requested At
+        local_completed_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Local Completed At
+        external_cleanup_required:
+          items:
+            type: string
+          type: array
+          title: External Cleanup Required
+      type: object
+      required:
+      - job_id
+      - status
+      - requested_at
+      title: NotyfiAccountDeletionInfo
     ValidationError:
       properties:
         loc:
@@ -518,59 +583,60 @@ components:
       - msg
       - type
       title: ValidationError
-    NotyfiAccountPatch:
+    NotyfiWorkspace:
       properties:
-        expected_revision:
-          type: integer
-          minimum: 0.0
-          title: Expected Revision
-        display_name:
-          anyOf:
-          - type: string
-            maxLength: 80
-            minLength: 1
-          - type: 'null'
-          title: Display Name
-        workspace:
-          anyOf:
-          - $ref: '#/components/schemas/NotyfiWorkspace'
-          - type: 'null'
+        folders:
+          items:
+            $ref: '#/components/schemas/NotyfiWorkspaceFolder'
+          type: array
+          maxItems: 100
+          title: Folders
+        tracker_labels:
+          additionalProperties:
+            type: string
+          type: object
+          title: Tracker Labels
+      additionalProperties: false
+      type: object
+      title: NotyfiWorkspace
+    NotyfiWorkspaceFolder:
+      properties:
+        id:
+          type: string
+          maxLength: 64
+          minLength: 1
+          pattern: ^[A-Za-z0-9][A-Za-z0-9_-]*$
+          title: Id
+        name:
+          type: string
+          maxLength: 80
+          minLength: 1
+          title: Name
+        tracker_ids:
+          items:
+            type: string
+          type: array
+          maxItems: 500
+          title: Tracker Ids
       additionalProperties: false
       type: object
       required:
-      - expected_revision
-      title: NotyfiAccountPatch
-    ErrorBody:
+      - id
+      - name
+      title: NotyfiWorkspaceFolder
+    Error:
       properties:
-        code:
-          type: string
-          title: Code
-          description: Stable machine-readable error code.
-        message:
-          type: string
-          title: Message
-          description: Human-readable detail.
-        request_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Request Id
-          description: Correlation id, when available.
+        error:
+          $ref: '#/components/schemas/ErrorBody'
       type: object
       required:
-      - code
-      - message
-      title: ErrorBody
-    NotyfiNotificationEmailUpdate:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-      additionalProperties: false
-      type: object
-      required:
-      - enabled
-      title: NotyfiNotificationEmailUpdate
+      - error
+      title: Error
+      description: The single error response shape for every 4xx/5xx on the contract.
+      example:
+        error:
+          code: not_found
+          message: lead not found
     NotyfiNotificationEmailInfo:
       properties:
         id:
@@ -601,92 +667,6 @@ components:
       - id
       - email
       title: NotyfiNotificationEmailInfo
-    NotyfiWorkspaceFolder:
-      properties:
-        id:
-          type: string
-          maxLength: 64
-          minLength: 1
-          pattern: ^[A-Za-z0-9][A-Za-z0-9_-]*$
-          title: Id
-        name:
-          type: string
-          maxLength: 80
-          minLength: 1
-          title: Name
-        tracker_ids:
-          items:
-            type: string
-          type: array
-          maxItems: 500
-          title: Tracker Ids
-      additionalProperties: false
-      type: object
-      required:
-      - id
-      - name
-      title: NotyfiWorkspaceFolder
-    NotyfiAccountDeletionInfo:
-      properties:
-        job_id:
-          type: string
-          title: Job Id
-        status:
-          type: string
-          title: Status
-        requested_at:
-          type: string
-          title: Requested At
-        local_completed_at:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Local Completed At
-        external_cleanup_required:
-          items:
-            type: string
-          type: array
-          title: External Cleanup Required
-      type: object
-      required:
-      - job_id
-      - status
-      - requested_at
-      title: NotyfiAccountDeletionInfo
-    NotyfiNotificationEmailCreate:
-      properties:
-        email:
-          type: string
-          maxLength: 254
-          minLength: 3
-          title: Email
-      additionalProperties: false
-      type: object
-      required:
-      - email
-      title: NotyfiNotificationEmailCreate
-    Error:
-      properties:
-        error:
-          $ref: '#/components/schemas/ErrorBody'
-      type: object
-      required:
-      - error
-      title: Error
-      description: The single error response shape for every 4xx/5xx on the contract.
-      example:
-        error:
-          code: not_found
-          message: lead not found
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     NotyfiAccountInfo:
       properties:
         tenant_id:
@@ -728,6 +708,26 @@ components:
         ``email`` is populated only from a separately verified, same-sub Cognito ID token.  It is never
 
         accepted from an ordinary request body or copied back from Stripe.'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    NotyfiAccountDeleteConfirm:
+      properties:
+        confirmation:
+          type: string
+          const: DELETE
+          title: Confirmation
+      additionalProperties: false
+      type: object
+      required:
+      - confirmation
+      title: NotyfiAccountDeleteConfirm
   securitySchemes:
     bearerAuth:
       type: http

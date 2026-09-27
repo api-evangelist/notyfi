@@ -61,7 +61,7 @@ tags_raw:
 - Alerts
 apis:
 - aid: notyfi:notyfi-account-api
-  name: Notyfi account API
+  name: Notyfi Account API
   description: The account API from Notyfi — 3 operation(s) for account.
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
@@ -77,7 +77,7 @@ apis:
   - type: APIReference
     url: https://notyfi.com/docs
 - aid: notyfi:notyfi-billing-api
-  name: Notyfi billing API
+  name: Notyfi Billing API
   description: The billing API from Notyfi — 3 operation(s) for billing.
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
@@ -93,7 +93,7 @@ apis:
   - type: APIReference
     url: https://notyfi.com/docs
 - aid: notyfi:notyfi-keys-api
-  name: Notyfi keys API
+  name: Notyfi Keys API
   description: The keys API from Notyfi — 2 operation(s) for keys.
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
@@ -109,7 +109,7 @@ apis:
   - type: APIReference
     url: https://notyfi.com/docs
 - aid: notyfi:notyfi-trackers-api
-  name: Notyfi trackers API
+  name: Notyfi Trackers API
   description: The trackers API from Notyfi — 6 operation(s) for trackers.
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
@@ -125,7 +125,7 @@ apis:
   - type: APIReference
     url: https://notyfi.com/docs
 - aid: notyfi:notyfi-webhooks-api
-  name: Notyfi webhooks API
+  name: Notyfi Webhooks API
   description: The webhooks API from Notyfi — 4 operation(s) for webhooks.
   humanURL: https://notyfi.com/docs
   baseURL: https://api.notyfi.com/api/v1
