@@ -241,190 +241,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    BillingCadence:
-      type: string
-      enum:
-      - instant
-      - hourly
-      - daily
-      - weekly
-      title: BillingCadence
-    BillingCheckoutCreate:
-      properties:
-        plan:
-          $ref: '#/components/schemas/BillingPlan'
-          default: pro
-      type: object
-      title: BillingCheckoutCreate
-      description: 'Start hosted Checkout for the one public paid plan.
-
-
-        The client chooses a logical plan, never a Stripe Price ID or redirect URL; both are server-owned.'
-    ErrorBody:
-      properties:
-        code:
-          type: string
-          title: Code
-          description: Stable machine-readable error code.
-        message:
-          type: string
-          title: Message
-          description: Human-readable detail.
-        request_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Request Id
-          description: Correlation id, when available.
-      type: object
-      required:
-      - code
-      - message
-      title: ErrorBody
-    BillingPortalSession:
-      properties:
-        url:
-          type: string
-          title: Url
-      type: object
-      required:
-      - url
-      title: BillingPortalSession
-    BillingLimits:
-      properties:
-        max_active_trackers:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Active Trackers
-          description: Tracker cap for this plan; null means contract-defined/unlimited Enterprise.
-        max_tracker_creations_24h:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Tracker Creations 24H
-          description: Rolling 24-hour creation cap; null means contract-defined/unlimited Enterprise.
-        allowed_cadences:
-          items:
-            $ref: '#/components/schemas/BillingCadence'
-          type: array
-          title: Allowed Cadences
-      type: object
-      required:
-      - max_active_trackers
-      - max_tracker_creations_24h
-      - allowed_cadences
-      title: BillingLimits
-    Error:
-      properties:
-        error:
-          $ref: '#/components/schemas/ErrorBody'
-      type: object
-      required:
-      - error
-      title: Error
-      description: The single error response shape for every 4xx/5xx on the contract.
-      example:
-        error:
-          code: not_found
-          message: lead not found
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    NotyfiWorkspaceFolder:
-      properties:
-        id:
-          type: string
-          maxLength: 64
-          minLength: 1
-          pattern: ^[A-Za-z0-9][A-Za-z0-9_-]*$
-          title: Id
-        name:
-          type: string
-          maxLength: 80
-          minLength: 1
-          title: Name
-        tracker_ids:
-          items:
-            type: string
-          type: array
-          maxItems: 500
-          title: Tracker Ids
-      additionalProperties: false
-      type: object
-      required:
-      - id
-      - name
-      title: NotyfiWorkspaceFolder
-    NotyfiWorkspace:
-      properties:
-        folders:
-          items:
-            $ref: '#/components/schemas/NotyfiWorkspaceFolder'
-          type: array
-          maxItems: 100
-          title: Folders
-        tracker_labels:
-          additionalProperties:
-            type: string
-          type: object
-          title: Tracker Labels
-      additionalProperties: false
-      type: object
-      title: NotyfiWorkspace
-    NotyfiNotificationEmailInfo:
-      properties:
-        id:
-          type: integer
-          title: Id
-        email:
-          type: string
-          title: Email
-        enabled:
-          type: boolean
-          title: Enabled
-          default: true
-        verified:
-          type: boolean
-          title: Verified
-          default: false
-        primary:
-          type: boolean
-          title: Primary
-          default: false
-        verification_expires_at:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Verification Expires At
-      type: object
-      required:
-      - id
-      - email
-      title: NotyfiNotificationEmailInfo
     NotyfiAccountInfo:
       properties:
         tenant_id:
@@ -466,22 +282,18 @@ components:
         ``email`` is populated only from a separately verified, same-sub Cognito ID token.  It is never
 
         accepted from an ordinary request body or copied back from Stripe.'
-    BillingPlan:
-      type: string
-      enum:
-      - free
-      - pro
-      - enterprise
-      title: BillingPlan
-    HTTPValidationError:
+    BillingUsage:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        active_trackers:
+          type: integer
+          title: Active Trackers
+          default: 0
+        creations_last_24h:
+          type: integer
+          title: Creations Last 24H
+          default: 0
       type: object
-      title: HTTPValidationError
+      title: BillingUsage
     BillingCheckoutSession:
       properties:
         url:
@@ -496,18 +308,17 @@ components:
       required:
       - url
       title: BillingCheckoutSession
-    BillingUsage:
+    BillingCheckoutCreate:
       properties:
-        active_trackers:
-          type: integer
-          title: Active Trackers
-          default: 0
-        creations_last_24h:
-          type: integer
-          title: Creations Last 24H
-          default: 0
+        plan:
+          $ref: '#/components/schemas/BillingPlan'
+          default: pro
       type: object
-      title: BillingUsage
+      title: BillingCheckoutCreate
+      description: 'Start hosted Checkout for the one public paid plan.
+
+
+        The client chooses a logical plan, never a Stripe Price ID or redirect URL; both are server-owned.'
     BillingStatus:
       properties:
         plan:
@@ -543,6 +354,195 @@ components:
       - limits
       - usage
       title: BillingStatus
+    BillingPlan:
+      type: string
+      enum:
+      - free
+      - pro
+      - enterprise
+      title: BillingPlan
+    BillingLimits:
+      properties:
+        max_active_trackers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Active Trackers
+          description: Tracker cap for this plan; null means contract-defined/unlimited Enterprise.
+        max_tracker_creations_24h:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Tracker Creations 24H
+          description: Rolling 24-hour creation cap; null means contract-defined/unlimited Enterprise.
+        allowed_cadences:
+          items:
+            $ref: '#/components/schemas/BillingCadence'
+          type: array
+          title: Allowed Cadences
+      type: object
+      required:
+      - max_active_trackers
+      - max_tracker_creations_24h
+      - allowed_cadences
+      title: BillingLimits
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Error:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+      type: object
+      required:
+      - error
+      title: Error
+      description: The single error response shape for every 4xx/5xx on the contract.
+      example:
+        error:
+          code: not_found
+          message: lead not found
+    NotyfiWorkspace:
+      properties:
+        folders:
+          items:
+            $ref: '#/components/schemas/NotyfiWorkspaceFolder'
+          type: array
+          maxItems: 100
+          title: Folders
+        tracker_labels:
+          additionalProperties:
+            type: string
+          type: object
+          title: Tracker Labels
+      additionalProperties: false
+      type: object
+      title: NotyfiWorkspace
+    BillingPortalSession:
+      properties:
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - url
+      title: BillingPortalSession
+    ErrorBody:
+      properties:
+        code:
+          type: string
+          title: Code
+          description: Stable machine-readable error code.
+        message:
+          type: string
+          title: Message
+          description: Human-readable detail.
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+          description: Correlation id, when available.
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorBody
+    NotyfiWorkspaceFolder:
+      properties:
+        id:
+          type: string
+          maxLength: 64
+          minLength: 1
+          pattern: ^[A-Za-z0-9][A-Za-z0-9_-]*$
+          title: Id
+        name:
+          type: string
+          maxLength: 80
+          minLength: 1
+          title: Name
+        tracker_ids:
+          items:
+            type: string
+          type: array
+          maxItems: 500
+          title: Tracker Ids
+      additionalProperties: false
+      type: object
+      required:
+      - id
+      - name
+      title: NotyfiWorkspaceFolder
+    NotyfiNotificationEmailInfo:
+      properties:
+        id:
+          type: integer
+          title: Id
+        email:
+          type: string
+          title: Email
+        enabled:
+          type: boolean
+          title: Enabled
+          default: true
+        verified:
+          type: boolean
+          title: Verified
+          default: false
+        primary:
+          type: boolean
+          title: Primary
+          default: false
+        verification_expires_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Verification Expires At
+      type: object
+      required:
+      - id
+      - email
+      title: NotyfiNotificationEmailInfo
+    BillingCadence:
+      type: string
+      enum:
+      - instant
+      - hourly
+      - daily
+      - weekly
+      title: BillingCadence
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
   securitySchemes:
     bearerAuth:
       type: http

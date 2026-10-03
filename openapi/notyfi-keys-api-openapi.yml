@@ -202,34 +202,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    ErrorBody:
-      properties:
-        code:
-          type: string
-          title: Code
-          description: Stable machine-readable error code.
-        message:
-          type: string
-          title: Message
-          description: Human-readable detail.
-        request_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Request Id
-          description: Correlation id, when available.
-      type: object
-      required:
-      - code
-      - message
-      title: ErrorBody
-    ApiKeyScope:
-      type: string
-      enum:
-      - read
-      - feeds:write
-      title: ApiKeyScope
-      description: The complete capability vocabulary assignable to an Atlas API key.
     ApiKeyCreated:
       properties:
         id:
@@ -293,6 +265,83 @@ components:
         scopes:
         - read
         - feeds:write
+    CreateApiKey:
+      properties:
+        name:
+          type: string
+          maxLength: 64
+          minLength: 1
+          title: Name
+          description: Human label for the key (1-64 chars).
+        scopes:
+          items:
+            $ref: '#/components/schemas/ApiKeyScope'
+          type: array
+          minItems: 1
+          title: Scopes
+          description: Capabilities granted to the key. Defaults to read + tracker writes. Use ['read'] for a read-only key.
+      type: object
+      required:
+      - name
+      title: CreateApiKey
+      description: 'The mint body: a human label for the new key, shown back in listings so a tenant can tell its
+
+        keys apart (''CI key'', ''Claude Desktop'', ...).'
+      example:
+        name: CI key
+        scopes:
+        - read
+        - feeds:write
+    Error:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+      type: object
+      required:
+      - error
+      title: Error
+      description: The single error response shape for every 4xx/5xx on the contract.
+      example:
+        error:
+          code: not_found
+          message: lead not found
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ApiKeyScope:
+      type: string
+      enum:
+      - read
+      - feeds:write
+      title: ApiKeyScope
+      description: The complete capability vocabulary assignable to an Atlas API key.
+    ErrorBody:
+      properties:
+        code:
+          type: string
+          title: Code
+          description: Stable machine-readable error code.
+        message:
+          type: string
+          title: Message
+          description: Human-readable detail.
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+          description: Correlation id, when available.
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorBody
     ApiKeyInfo:
       properties:
         id:
@@ -348,46 +397,6 @@ components:
         scopes:
         - read
         - feeds:write
-    CreateApiKey:
-      properties:
-        name:
-          type: string
-          maxLength: 64
-          minLength: 1
-          title: Name
-          description: Human label for the key (1-64 chars).
-        scopes:
-          items:
-            $ref: '#/components/schemas/ApiKeyScope'
-          type: array
-          minItems: 1
-          title: Scopes
-          description: Capabilities granted to the key. Defaults to read + tracker writes. Use ['read'] for a read-only key.
-      type: object
-      required:
-      - name
-      title: CreateApiKey
-      description: 'The mint body: a human label for the new key, shown back in listings so a tenant can tell its
-
-        keys apart (''CI key'', ''Claude Desktop'', ...).'
-      example:
-        name: CI key
-        scopes:
-        - read
-        - feeds:write
-    Error:
-      properties:
-        error:
-          $ref: '#/components/schemas/ErrorBody'
-      type: object
-      required:
-      - error
-      title: Error
-      description: The single error response shape for every 4xx/5xx on the contract.
-      example:
-        error:
-          code: not_found
-          message: lead not found
     ValidationError:
       properties:
         loc:
@@ -414,15 +423,6 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     bearerAuth:
       type: http
