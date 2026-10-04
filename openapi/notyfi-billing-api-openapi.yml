@@ -241,84 +241,28 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    NotyfiAccountInfo:
+    HTTPValidationError:
       properties:
-        tenant_id:
-          type: integer
-          title: Tenant Id
-        email:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Email
-        email_verified:
-          type: boolean
-          title: Email Verified
-          default: false
-        display_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Display Name
-        workspace_revision:
-          type: integer
-          minimum: 0.0
-          title: Workspace Revision
-          default: 0
-        workspace:
-          $ref: '#/components/schemas/NotyfiWorkspace'
-        notification_emails:
+        detail:
           items:
-            $ref: '#/components/schemas/NotyfiNotificationEmailInfo'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Notification Emails
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Error:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
       type: object
       required:
-      - tenant_id
-      title: NotyfiAccountInfo
-      description: 'The consumer identity bound to the access-token subject.
-
-
-        ``email`` is populated only from a separately verified, same-sub Cognito ID token.  It is never
-
-        accepted from an ordinary request body or copied back from Stripe.'
-    BillingUsage:
-      properties:
-        active_trackers:
-          type: integer
-          title: Active Trackers
-          default: 0
-        creations_last_24h:
-          type: integer
-          title: Creations Last 24H
-          default: 0
-      type: object
-      title: BillingUsage
-    BillingCheckoutSession:
-      properties:
-        url:
-          type: string
-          title: Url
-        expires_at:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Expires At
-      type: object
-      required:
-      - url
-      title: BillingCheckoutSession
-    BillingCheckoutCreate:
-      properties:
-        plan:
-          $ref: '#/components/schemas/BillingPlan'
-          default: pro
-      type: object
-      title: BillingCheckoutCreate
-      description: 'Start hosted Checkout for the one public paid plan.
-
-
-        The client chooses a logical plan, never a Stripe Price ID or redirect URL; both are server-owned.'
+      - error
+      title: Error
+      description: The single error response shape for every 4xx/5xx on the contract.
+      example:
+        error:
+          code: not_found
+          message: lead not found
     BillingStatus:
       properties:
         plan:
@@ -361,53 +305,94 @@ components:
       - pro
       - enterprise
       title: BillingPlan
-    BillingLimits:
+    BillingPortalSession:
       properties:
-        max_active_trackers:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Active Trackers
-          description: Tracker cap for this plan; null means contract-defined/unlimited Enterprise.
-        max_tracker_creations_24h:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Max Tracker Creations 24H
-          description: Rolling 24-hour creation cap; null means contract-defined/unlimited Enterprise.
-        allowed_cadences:
-          items:
-            $ref: '#/components/schemas/BillingCadence'
-          type: array
-          title: Allowed Cadences
+        url:
+          type: string
+          title: Url
       type: object
       required:
-      - max_active_trackers
-      - max_tracker_creations_24h
-      - allowed_cadences
-      title: BillingLimits
-    HTTPValidationError:
+      - url
+      title: BillingPortalSession
+    NotyfiAccountInfo:
       properties:
-        detail:
+        tenant_id:
+          type: integer
+          title: Tenant Id
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        email_verified:
+          type: boolean
+          title: Email Verified
+          default: false
+        display_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Display Name
+        workspace_revision:
+          type: integer
+          minimum: 0.0
+          title: Workspace Revision
+          default: 0
+        workspace:
+          $ref: '#/components/schemas/NotyfiWorkspace'
+        notification_emails:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/NotyfiNotificationEmailInfo'
           type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    Error:
-      properties:
-        error:
-          $ref: '#/components/schemas/ErrorBody'
+          title: Notification Emails
       type: object
       required:
-      - error
-      title: Error
-      description: The single error response shape for every 4xx/5xx on the contract.
-      example:
-        error:
-          code: not_found
-          message: lead not found
+      - tenant_id
+      title: NotyfiAccountInfo
+      description: 'The consumer identity bound to the access-token subject.
+
+
+        ``email`` is populated only from a separately verified, same-sub Cognito ID token.  It is never
+
+        accepted from an ordinary request body or copied back from Stripe.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    BillingUsage:
+      properties:
+        active_trackers:
+          type: integer
+          title: Active Trackers
+          default: 0
+        creations_last_24h:
+          type: integer
+          title: Creations Last 24H
+          default: 0
+      type: object
+      title: BillingUsage
     NotyfiWorkspace:
       properties:
         folders:
@@ -424,36 +409,6 @@ components:
       additionalProperties: false
       type: object
       title: NotyfiWorkspace
-    BillingPortalSession:
-      properties:
-        url:
-          type: string
-          title: Url
-      type: object
-      required:
-      - url
-      title: BillingPortalSession
-    ErrorBody:
-      properties:
-        code:
-          type: string
-          title: Code
-          description: Stable machine-readable error code.
-        message:
-          type: string
-          title: Message
-          description: Human-readable detail.
-        request_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Request Id
-          description: Correlation id, when available.
-      type: object
-      required:
-      - code
-      - message
-      title: ErrorBody
     NotyfiWorkspaceFolder:
       properties:
         id:
@@ -479,6 +434,60 @@ components:
       - id
       - name
       title: NotyfiWorkspaceFolder
+    BillingLimits:
+      properties:
+        max_active_trackers:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Active Trackers
+          description: Tracker cap for this plan; null means contract-defined/unlimited Enterprise.
+        max_tracker_creations_24h:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Tracker Creations 24H
+          description: Rolling 24-hour creation cap; null means contract-defined/unlimited Enterprise.
+        allowed_cadences:
+          items:
+            $ref: '#/components/schemas/BillingCadence'
+          type: array
+          title: Allowed Cadences
+      type: object
+      required:
+      - max_active_trackers
+      - max_tracker_creations_24h
+      - allowed_cadences
+      title: BillingLimits
+    BillingCadence:
+      type: string
+      enum:
+      - instant
+      - hourly
+      - daily
+      - weekly
+      title: BillingCadence
+    ErrorBody:
+      properties:
+        code:
+          type: string
+          title: Code
+          description: Stable machine-readable error code.
+        message:
+          type: string
+          title: Message
+          description: Human-readable detail.
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+          description: Correlation id, when available.
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorBody
     NotyfiNotificationEmailInfo:
       properties:
         id:
@@ -509,40 +518,31 @@ components:
       - id
       - email
       title: NotyfiNotificationEmailInfo
-    BillingCadence:
-      type: string
-      enum:
-      - instant
-      - hourly
-      - daily
-      - weekly
-      title: BillingCadence
-    ValidationError:
+    BillingCheckoutCreate:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        plan:
+          $ref: '#/components/schemas/BillingPlan'
+          default: pro
+      type: object
+      title: BillingCheckoutCreate
+      description: 'Start hosted Checkout for the one public paid plan.
+
+
+        The client chooses a logical plan, never a Stripe Price ID or redirect URL; both are server-owned.'
+    BillingCheckoutSession:
+      properties:
+        url:
           type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Url
+        expires_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Expires At
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - url
+      title: BillingCheckoutSession
   securitySchemes:
     bearerAuth:
       type: http
