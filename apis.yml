@@ -146,6 +146,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/notyfi-capability-edges.yml
+  name: Notyfi Business Capability Map
 - type: Website
   url: https://notyfi.com
 - type: Overlay
