@@ -40,7 +40,7 @@ x-backed-by:
 - y-combinator
 specificationVersion: '0.23'
 created: '2026-07-17'
-modified: '2026-09-16'
+modified: '2026-10-06'
 tags:
 - Company
 - Notification
@@ -146,6 +146,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- url: https://perceptronml.com/blog/
+  type: Blog
 - type: CapabilityMap
   url: capabilities/notyfi-capability-edges.yml
   name: Notyfi Business Capability Map
