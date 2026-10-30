@@ -64,6 +64,129 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Notyfi is a company surfaced as a portfolio company of y-combinator and added to the API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+Notyfi is a natural-language monitoring and notification service built by Perceptron ML (Y Combinator). Describe what to watch in one sentence -- new lawsuits, layoffs, price drops, listings, RFPs, breaking news -- and Notyfi watches the news, filings, databases, and the open web for it, delivering deduplicated canonical events instantly, hourly, daily, or weekly by email, on a live dashboard, or into agents and workflows via a REST API and a hosted MCP server. The API exposes persistent trackers, their event feeds, HMAC-signed outgoing webhooks, API-key management, account, and Stripe-backed billing. Authenticate with a Notyfi API key (Authorization: Bearer notyfi_mk_... or X-Api-Key).
 
-Backed by: y-combinator
+**Areas:** Company · Notification · Monitoring · Webhook · Real-Time · Agents · MCP · Alerts
+
+## Notyfi on APIs.io
+
+Everything profiled for Notyfi is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/notyfi/](https://apis.io/providers/notyfi/)** — or go straight to one of the APIs or properties below.
+
+### APIs (5)
+
+- [Notyfi Account API](https://apis.io/apis/notyfi/notyfi-account-api/) — The account API from Notyfi — 3 operation(s) for account.
+- [Notyfi Billing API](https://apis.io/apis/notyfi/notyfi-billing-api/) — The billing API from Notyfi — 3 operation(s) for billing.
+- [Notyfi Keys API](https://apis.io/apis/notyfi/notyfi-keys-api/) — The keys API from Notyfi — 2 operation(s) for keys.
+- [Notyfi Trackers API](https://apis.io/apis/notyfi/notyfi-trackers-api/) — The trackers API from Notyfi — 6 operation(s) for trackers.
+- [Notyfi Webhooks API](https://apis.io/apis/notyfi/notyfi-webhooks-api/) — The webhooks API from Notyfi — 4 operation(s) for webhooks.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Notyfi Webhooks](https://apis.io/asyncapis/notyfi/notyfi-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Notyfi](https://apis.io/servers/notyfi/notyfi/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Notyfi Agentic Access](https://apis.io/agentic-access/notyfi/notyfi-agentic-access/)
+
+#### Collections (5)
+
+Postman and Open Collection request collections.
+
+- [Notyfi account API](https://apis.io/collections/notyfi/open-notyfi-account-api/)
+- [Notyfi account billing API](https://apis.io/collections/notyfi/open-notyfi-billing-api/)
+- [Notyfi account keys API](https://apis.io/collections/notyfi/open-notyfi-keys-api/)
+- [Notyfi account trackers API](https://apis.io/collections/notyfi/open-notyfi-trackers-api/)
+- [Notyfi account webhooks API](https://apis.io/collections/notyfi/open-notyfi-webhooks-api/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Notyfi Openapi Overlay](https://apis.io/overlays/notyfi/notyfi-openapi-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Notyfi Authentication](https://apis.io/security/notyfi/notyfi-authentication/)
+- [Notyfi Domain Security](https://apis.io/security/notyfi/notyfi-domain-security/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://notyfi.com)
+- [Documentation](https://notyfi.com/docs)
+- [API reference](https://notyfi.com/docs)
+- [Pricing](https://notyfi.com/#pricing)
+- [Sign up](https://notyfi.com/dashboard/#signup)
+- [Blog](https://perceptronml.com/blog/)
+- [Terms of service](https://notyfi.com/terms)
+- [Privacy policy](https://notyfi.com/privacy)
+
+## API Evangelist rating
+
+**Kin Score 25.1** — emerging · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 54.0 |
+| Contract governance | 4.5 |
+| Operational transparency | 7.9 |
+| Developer ergonomics | 16.1 |
+| Access clarity | 0.0 |
+
+**Agent readiness 34.7** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | verified |
+| Error Semantics | verified |
+| OpenAPI Examples | — |
+| Rate Limit Signal | — |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 16.7** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/notyfi/](https://apis.io/providers/notyfi/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Notyfi: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/notyfi/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
